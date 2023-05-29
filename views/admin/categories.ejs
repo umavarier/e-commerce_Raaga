@@ -1,0 +1,52 @@
+<%- include ('../layouts/adminHeader.ejs') %>
+
+
+
+    <h4 style="color: white;" class="text-center my-5">CATEGORIES</h4>
+    <br>
+    <div  style="margin-left: 60px;">
+      <a  href="/admin/addCategories"><button type="button" class="btn btn-primary mx-3 justify-content-end">Add Categories</button></a>
+
+    </div>
+    <br>
+    <table class="table text-center">
+      <thead>
+        <tr>
+          <th  style="color: white;" scope="col">SL NO</th>
+          <th  style="color: white;" scope="col">CATEGORY NAME</th>
+          <th  style="color: white;" scope="col">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody  style="color: white;">
+
+        <% for(i=1;i<=category.length;i++){ %>
+          <tr>
+            <td>
+              <%=i%>
+            </td>
+            <td  style="color: white;"><%=category[i-1].name%></td>
+            <td>
+              <a   href="/admin/editCategory?id=<%- category[i-1]._id %>"><button style="color: white; background-color: rgb(101, 118, 32); width: 50px;" type="button"
+                  class="btn">edit</button></a>
+
+              <a id="<%-category[i-1]._id %>" style="text-decoration: none; color: #d15858;"
+                    href="/admin/unlistCategory?id=<%- category[i-1]._id %>">
+                    <% if(category[i-1].is_available){ %>Unlist<%}else{%>list<%}%>
+                  </a>
+              
+            </td>
+          </tr>
+          <%}%>
+      </tbody>
+    </table>
+    <br>
+   
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+      crossorigin="anonymous"></script>
+    <%- include ('../layouts/adminFooter.ejs') %>

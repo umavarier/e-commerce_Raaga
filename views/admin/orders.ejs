@@ -1,0 +1,299 @@
+<%- include ('../layouts/adminHeader.ejs') %>
+
+
+   <style>
+        table,
+        th,
+        td {
+            border: 1px solid rgba(7, 7, 7, 0.701);
+        }
+    </style> 
+
+
+    
+        <h4 style="color: white;" class="text-center my-5">ORDER MANAGEMENT</h4>
+        <div class="mb-3 ps-4">
+            <!-- <input class="mx-3 ps-2 text-uppercase" style="border: none;border-radius: 4px; background-color: rgb(49, 49, 49); color: white;" type="date" name="startdate" id="startdate" onchange="cli()">
+            <input class="mx-3 ps-2 text-uppercase" style="border: none;border-radius: 4px; background-color: rgb(49, 49, 49); color: white;" type="date" name="enddate" id="enddate" onchange="cli()"> -->
+            
+        </div>
+        <div class="accordion accordion-flush col-md-4 " id="accordionFlushExample">
+            <div style="border-radius: 40px;" class="accordion-item">
+              <h2 class="accordion-header" id="flush-headingOne">
+                <button class="accordion-button collapsed  text-info" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                  Sales Report
+                </button>
+              </h2>
+              <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">
+                    <button class="bg-info" style="border: none; border-radius: 4px;" type="button" id="pdf"><small>Download as pdf</small></button>
+                    <button class="bg-info" style="border: none; border-radius: 4px;" type="button" id="excel"><small>Download as excel</small></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <table class="table text-center border " id="ordersTable">
+            <thead>
+                <tr style="color: white;">
+                    <th scope="col">SL NO</th>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">ACTION</th>
+
+
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <% if(orders.length> 0){ %>
+                    <% for(let i=1;i<=orders.length; i++){ %>
+                        <tr class="text-light">
+                            <th>
+                                <%= i %>
+                            </th>
+                            <td>
+                                <%= orders[i-1]._id %>
+                            </td>
+                            <td>
+                                <%=orders[i-1].userId.name%>
+                            </td>
+                            <td>
+                                <%= orders[i-1].payment.amount%>
+                            </td>
+                            <td>
+                                <%= orders[i-1].payment.method%>
+
+                            </td>
+                            <td>
+                                <%= orders[i-1].status%>
+                            </td>
+                            <td>
+                                <%= orders[i-1].createdAt.toDateString()%>
+                            </td>
+                            <td>
+                                
+                                <form action="/admin/updateStatus" method="post">
+                                   
+                                    <% if (orders[i-1].status!="returned" &&orders[i-1].status!="cancelled"&&orders[i-1].status!="Delivered"&&orders[i-1].status!="return success"&&orders[i-1].status!="return cancelled"&&orders[i-1].status!="reject return" ){%>
+                                       
+                                        <div class="col-md-10 d-flex justify-content-between">
+                                            <a style="height: 30px; padding-bottom: 5px;" class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                    
+                                        <select style="background-color: rgb(37, 37, 37); height: 30px; border-color: rgb(64, 64, 64);" name="status" class="browser-default text-light rounded custom-select">
+                                            <option><%=orders[i-1].status%></option>
+                                             <option>packed</option>
+                                            <option>Shipped</option>
+                                            <option>Delivered</option>
+                                            <option>cancelled</option>
+                                            
+                                            <option>reject return</option>
+                                            <option>out for pickup</option>
+                                            <option>return success</option>
+                                        </select>
+                                        <input type="hidden" name="orderId" value="<%=orders[i-1]._id%>">
+                                        <button class="btn-sm" style="background-color: rgb(0, 255, 98); border: none; border-radius: 5px;" type="submit">update</button>
+                                        
+                                        </div>
+                                       
+                                        <%}else if(orders[i-1].status=="reject return" ){%>
+                                            <div class="col-md-10 d-flex justify-content-between">
+                                                <small style="margin-right: 5px;" class="text-secondary text-uppercase mt-1 text-decoration-none ">Returned Rejected</small>
+                                                <a class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                            </div>
+                                        <%}else if(orders[i-1].status=="delivered" ){%>
+                                            <div class="col-md-10 d-flex justify-content-between">
+                                                <small style="margin-right: 5px;" class="text-secondary text-uppercase mt-1 text-decoration-none">Return Cancelled by User</small>
+                                                <a class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                            </div>
+                                        <%}else if(orders[i-1].status=="return success" ){%>
+                                            <div class="col-md-10 d-flex justify-content-between">
+                                                <small style="margin-right: 5px;" class="text-info text-uppercase mt-1 text-decoration-none">Returned Sucessfully</small>
+                                                <a class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                            </div>
+                                        <%}else if(orders[i-1].status=="cancelled" ){%>
+                                                <div  class="col-md-10 d-flex justify-content-between">
+                                                    <small style="margin-right: 5px;" class="text-danger text-uppercase mt-1 text-decoration-none">Order Cancelled</small>
+                                                    <a class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                                </div>
+                                        <%}else if(orders[i-1].status=="returned"||orders[i-1].status=="return confirmed" ||orders[i-1].status=="out for Pickup"){%>
+                                            <a class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                            <select style="background-color: rgb(37, 37, 37); height: 30px; border-color: rgb(64, 64, 64);" name="status" class="browser-default text-light rounded custom-select">
+                                                <option><%=orders[i-1].status%></option>
+                                                <option>return confirmed</option>
+                                            </select>
+                                            <input type="hidden" name="orderId" value="<%=orders[i-1]._id%>">
+                                            <button class="btn-sm" style="background-color: rgb(0, 255, 98); border: none; border-radius: 5px;" type="submit">update</button>
+                                           
+                                        <%}else{%>
+                                           <div class="col-md-10 d-flex justify-content-between">
+                                                <small style="margin-right: 5px; color: rgb(124, 228, 54);" class="text-uppercase mt-1 text-decoration-none">Delivered</small>
+                                                <a class="btn btn-sm rounded bg-info border-0 text-sm" href="/admin/loadOrderDetails?id=<%=orders[i-1]._id%>"><small>details</small></a>
+                                           
+                                           </div>
+                                        <% } %>
+                                </form>
+                            </td>
+
+
+
+
+                        </tr>
+
+                        <% } } else{ %>
+                            <tr class="text-light">
+                                <td colspan="5 ">Products Not Found</td>
+                            </tr>
+                            <% } %>
+
+            </tbody>
+        </table>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>
+
+
+
+        <!-- SheetJS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            
+
+
+            // Download as Excel
+            // document.getElementById('downloadExcelBtn').addEventListener('click', function() {
+            // Get the table element
+            //   var table = document.getElementById('ordersTable');
+
+            // Convert the table data to a worksheet object
+            //   var worksheet = XLSX.utils.table_to_sheet(table);
+
+            // Create a new workbook and add the worksheet
+            //   var workbook = XLSX.utils.book_new();
+            //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales');
+
+            // Save the Excel file
+            //   XLSX.writeFile(workbook, 'sales.xlsx');
+            // });
+
+
+            function cli() {
+                starts = document.getElementById("startdate").value
+                ends = document.getElementById("enddate").value
+                const dateObj = new Date(starts);
+                const dateOb = new Date(ends);
+                const start = dateObj.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                });
+                const end = dateOb.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                });
+                console.log(start+" "+end);
+
+
+                console.log(start, end);
+                data = { start: start, end: end }
+                axios.post('/admin/updateOrder', data)
+                    .then(res => {
+                        if (res.data) {
+                            console.log(res.data);
+                            console.log(res.data.orderDetail);
+                            let orders = res.data.orderDetail
+                            let ordersTableHTML = '';
+
+                            if (orders.length > 0) {
+                                orders.forEach((order, i) => {
+                                    ordersTableHTML += `<tr> <th>${i + 1}</th> <td>${order._id}</td> <td>${order.userId.name}</td> <td>${order.payment.amount}</td> <td>${order.payment.method}</td> <td>${order.status}</td> <td>${order.createdAt}</td> <td> <a class="text-white btn btn-light" href="/admin/loadOrderDetails?id=${order._id}">view Details</a><br> <br> <form action="/admin/updateStatus" method="post"> <select name="status" class="browser-default custom-select"> <option>${order.status}</option> <option>cancelled</option> <option>Delivered</option> <option>Shipped</option> <option>packed</option> </select> <input type="hidden" name="orderId" value="${order._id}"> ${order.status !== 'returned' ? '<button style="background-color: darkcyan;" type="submit">update</button>' : ''} </form> </td> </tr> `;
+                                });
+                            } else {
+                                ordersTableHTML = '<tr><td colspan="5">Products Not Found</td></tr>';
+                            }
+                            document.getElementById("tbody").innerHTML = ordersTableHTML;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+
+
+            // Download as PDF
+            // console.log(jsPDF);
+            document.getElementById('pdf').addEventListener('click', function () {
+                var doc = new jsPDF();
+                doc.autoTable({
+                    html: '#ordersTable',
+                    columns: [
+                        { header: 'Order ID', dataKey: 'Order ID' },
+                        { header: 'Product', dataKey: 'Product' },
+                        { header: 'Price', dataKey: 'Price' },
+                        { header: 'Method', dataKey: 'Method' },
+                        { header: 'Method', dataKey: 'Method' },
+                        { header: 'Method', dataKey: 'Method' },
+                        { header: 'Method', dataKey: 'Method' },
+
+
+                    ]
+                });
+                doc.save('gamersBootCamp-Sales.pdf');
+            });
+
+            // download As excel
+            document.getElementById('excel').addEventListener('click', function() {
+    // Get the table element
+    var table = document.getElementById('ordersTable');
+
+    // Convert the table data to a worksheet object
+    var worksheet = XLSX.utils.table_to_sheet(table);
+
+    // Create a new workbook and add the worksheet
+    var workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales');
+
+    // Generate a Blob from the Workbook
+    var wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+    var blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+
+    // Create a temporary link element and download the Blob
+    var a = document.createElement('a');
+    document.body.appendChild(a);
+    a.style.display = 'none';
+    var url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = 'sales.xlsx';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+
+  // Utility function to convert string to ArrayBuffer
+  function s2ab(s) {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i < s.length; i++) {
+      view[i] = s.charCodeAt(i) & 0xff;
+    }
+    return buf;
+  }
+
+
+
+
+        </script>
+
+        <%- include ('../layouts/adminFooter.ejs') %>

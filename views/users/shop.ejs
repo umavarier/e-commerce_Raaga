@@ -1,0 +1,388 @@
+<%- include('../layouts/header.ejs') %>
+
+
+
+    <!-- Navbar Start -->
+
+    <style>
+
+
+        /* Style for the label */
+        .label {
+            text-align: center;
+            background-color: white;
+            padding: 10px;
+            display: inline-block;
+            margin-right: 10px;
+            font-weight: bold;
+            width: 35px;
+        }
+
+        /* Style for the radio button */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* Style for the label when the radio button is checked */
+        input[type="radio"]:checked+label {
+            color: #2196F3;
+        }
+
+
+
+        /* Style for the radio button circle */
+        input[type="radio"]+label::before {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+
+        /* Style for the radio button circle when checked */
+        input[type="radio"]:checked+label::before {
+            background-color: #2196F3;
+            border-color: #2196F3;
+        }
+
+
+
+        /* Accessibility styles for the radio button circle */
+        input[type="radio"]+label::before {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+
+        input[type="radio"]+label::before {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+
+        input[type="radio"]+label::before:focus,
+        input[type="radio"]+label::before:hover {
+            outline: none;
+            border-color: #2196F3;
+        }
+    </style>
+
+    
+    <!-- Breadcrumb Start -->
+    <br>
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb mb-30">
+                    <a class="breadcrumb-item text-light text-decoration-none" href="/home">Home</a>
+                    <a class="breadcrumb-item active text-decoration-none" href="/loadShop">Shop</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb End -->
+
+
+    <!-- Shop Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <!-- Shop Sidebar Start -->
+            <div class="col-lg-3 col-md-4">
+                <!-- Price Start -->
+                <h5 class="section-title position-relative text-uppercase mb-3"><span style="color: white;" class="pr-3">Filter by Category</span></h5>
+                <div style="background-color: rgb(33, 33, 33); border-radius: 20px;" class=" p-4 mb-30">
+                    <form style="color: white;" action="/loadShop">
+
+
+                        <% for(i=0;i<category.length;i++){%>
+                                    <% if (category[i].is_available==1){%>
+                                        <div  class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-1">
+                                        <div class="form-check ">
+                                        <input class="category form-check-input" type="checkbox" value="<%-i%>"
+                                        name="category" onchange="update()" 
+                                        <% for(j=0; j< selected.length; j++) {
+                                        if(selected[j]==i) { %>checked<%}}%>/>
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            <%-category[i].name %>
+                                        </label>
+                                    </div>
+                                        </div>
+                                    <%}%>
+                            <%}%>
+                </div>
+                <!-- Price End -->
+
+                <!-- <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by color</span></h5> -->
+                <div class="bg p-4 mb-30">
+                    
+                </div>
+            </div>
+            <!-- Shop Sidebar End -->
+
+
+            <!-- Shop Product Start -->
+            <div class="col-lg-9 col-md-8">
+                <div class="row pb-3">
+                    <div class="col-12 pb-1">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            
+                            <div class="ml-2">
+                                <select style="background-color: rgb(25, 25, 25); border-color:rgb(52, 52, 52); color: rgb(125, 125, 125); border-radius: 5px;" class="select-box select-box--transparent-b-2"
+                                    name="limit" id="limit" onchange="update()">
+                                    <option value="12" <% if(limit==12) { %>selected<%}%> >Show: All</option>
+                                    <option value="3" <% if(limit==3) { %>selected<%}%> >Show: 3</option>
+                                    <option value="6" <% if(limit==6) { %>selected<%}%> >Show: 6</option>
+                                    <option value="9" <% if(limit==9) { %>selected<%}%> >Show: 9</option>
+                                </select>
+                            </div>
+
+                            <div class="ml-2">
+                                <select style="background-color: rgb(25,25,25); border-color:rgb(52, 52, 52) ;color: rgb(125, 125, 125); border-radius: 5px;" class="select-box select-box--transparent-b-2" name="sort" id="sort"
+                                    onchange="update()">
+                                    <option value="0" <% if(order==0) { %>selected<%}%> >Sort By: Latest Arrivals</option>
+                                    <option value="1" <% if(order==1) { %>selected<%}%> >Sort By: Lowest Price</option>
+                                    <option value="-1" <% if(order==-1) { %>selected<%}%> >Sort By: Highest Price</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="row pb-3" id="products">
+                    <% for(i=0;i<product.length;i++){ %>
+                        <% if(product[i].isAvailable){ %>
+                            <div  class="col-12 col-md-4 mb-4">
+                            <div style="background-color: rgb(35, 35, 35); border-color: rgb(94, 94, 94);border-radius: 20px;" class="card h-100">
+                                <a  href="/viewDetails?id=<%=product[i]._id%>">
+                                    <img style="border-width: 1px; border-color: rgb(226, 99, 99); border-radius: 20px;"  src="/uploads/<%=product[i].image[0]%>" class="card-img-top" alt="...">
+                                </a>
+                                
+                             <div class="card-body">
+                            <ul class="list-unstyled d-flex justify-content-between">
+                                
+                                <li>
+                                   <%if (product[i].rating < 1){%>
+                                        <i class="text-warning fad fa fa-star-half"></i>
+                                    <%}else if(product[i].rating <=1.5){%>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star-half"></i>
+                                    <%}else if(product[i].rating < 2.5){%>
+                                        <i class="text-muted fa fa-star"></i>
+                                        <i class="text-muted fa fa-star"></i>
+                                    <%}else if(product[i].rating < 3.5){%>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+
+                                    <%}else if(product[i].rating < 4){%>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star-half"></i> 
+                                    
+                                    <%}else if(product[i].rating < 4.5){%>
+
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                    <%}else if(product[i].rating < 5){%>
+
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star-half"></i>
+                                        
+                                    
+                                    <%}else if(product[i].rating == 5){%>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        
+                                    <%}%>
+                                   
+                                </li>
+                                <li style="color: #ffffff;" class="text-right">Rs <%=product[i].price%></li>
+                            </ul>
+                            
+                            <a href="/viewDetails?id=<%=product[i]._id%>" style="color: #ffffff;" class="h2 text-uppercase text-decoration-none"><%=product[i].name%></a>
+                            
+                                                       
+                            </div>
+                        </div>
+                        </div>
+                 <%}%>
+
+                <%}%>
+
+                
+            </div>
+
+
+
+
+
+                
+
+                <div class="row pb-3 ">
+                    <div class="col-12 " id="pgnt" style="display: block;">
+                        <nav>
+                            <ul class="pagination justify-content-center">
+                                <% for(i=1;i<pageCount;i++){%>
+                                    <li class="page-item" id="<%-i%>">
+                                        <a style="color: white; " class="page-link" onclick="updatePage('<%-i%>')"><%-i%></a></li>
+                                    <%}%>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- Shop Product End --></form>
+        </div>
+    </div>
+    <!-- Shop End -->
+
+
+
+
+     
+
+
+
+
+<script src="https://example.com/fontawesome/v6.4.0/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+<script src="https://example.com/fontawesome/v6.4.0/js/solid.js"></script>
+<script src="https://example.com/fontawesome/v6.4.0/js/brands.js"></script>
+
+
+
+    <script>
+        console.log('itrufysvdmhg');
+        let page = 0
+        function updatePage(pg = 0) {
+            console.log('rtjhihughg');
+            page = pg
+            console.log(page);
+            pageNo = document.getElementsByClassName('page-item')
+            for (let key of pageNo) { key.classList.remove('active')}
+            document.getElementById(page).classList.add('active')
+            update()
+        }
+
+        function update() {
+            console.log('litugbh');
+            var elements = document.getElementsByClassName("category");
+            var limit = document.getElementById('limit').value
+            var sort = document.getElementById('sort').value
+            var search = document.getElementById('search').value
+            var arr = '';
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].checked) {
+                    arr = [...arr, elements[i].value]
+                    
+                }
+            }
+            console.log(arr + '\n' + limit + '\n' + sort + '\n' + search + '\n' + page);
+            $.ajax({
+                url: '/loadShop',
+                type: 'GET',
+                data: { category: arr, limit: limit, sort: sort, search: search, page: page, ajax: true },
+                success: function (data) {
+                    console.log(data);
+                    if (data.pageCount == 1) {
+                        document.getElementById('pgnt').style.display = 'none';
+                    } else {
+                        document.getElementById('pgnt').style.display = 'block';
+                    }
+                    product = data.products
+                    document.getElementById('products').innerHTML = `
+    ${product.map((productItem) => `
+
+
+
+
+        <div class="col-12 col-md-4 mb-4">
+                    <div style="background-color: rgb(35, 35, 35); border-color: rgb(94, 94, 94);border-radius: 20px;" class="card h-100">
+                        <a href="/viewDetails?id=${productItem._id}">
+                            <img style="border-width: 1px; border-color: rgb(226, 99, 99); border-radius: 20px;" src="/uploads/${productItem.image[0]}" class="card-img-top" alt="...">
+                        </a>
+                        <div class="card-body">
+                            <ul class="list-unstyled d-flex justify-content-between">
+                                <li>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                </li>
+                                <li class="text-muted text-right ">Rs ${productItem.price}</li>
+                            </ul>
+                            <a href="/viewDetails?id=${productItem._id}" style="color: #ffffff;" class="h2 text-uppercase text-decoration-none">${productItem.name}</a>
+                            
+                    
+                                                        
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+    `).join('')}
+`;
+                    console.log(data.pageCount);
+                    if (data.pageCount > 1) {
+                        console.log('gte');
+                        document.getElementById('pgnt').innerHTML = `
+    <nav>
+        <ul class="pagination justify-content-center">
+            ${Array(data.pageCount).fill().map((_, index) => `
+                <li class="page-item pg" id="${index}">
+                    <a class="page-link" onclick="updatePage('${index}')">${index + 1}</a>
+                </li>
+            `).join('')}
+        </ul>
+    </nav>
+`;
+                    } else {
+                        if (data.page != 0) {
+                            updatePage()
+                        }
+                    }
+
+
+                }
+            });
+        }
+    </script>
+
+    <%- include('../layouts/footer.ejs') %>
