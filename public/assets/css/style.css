@@ -163,6 +163,11 @@ ol {
 }
 
 /* buttons */
+@font-face {
+	font-family: 'Beau Rivage';
+	src: url('fonts/beau-rivage.ttf') format('truetype');
+  }
+  
 
 .primary-btn {
 	display: inline-block;

@@ -2,7 +2,6 @@ const User = require('../models/userModel')
 const products = require("../models/productModel")
 
 
-
 const loadCart = async (req, res) => {
     try {
         userSession = req.session.user_id;
@@ -51,7 +50,7 @@ const updateCart = async (req, res) => {
         const productData = await products.findById({ _id: _id })
         const price = productData.price;
         let test = await userData.updateCart(_id, quantity)
-        console.log(test);
+        console.log("hai"+test);
         res.json({ test, price })
 
     } catch (error) {
@@ -77,5 +76,4 @@ module.exports = {
     addToCart,
     deleteCart,
     updateCart,
-   
 }

@@ -18,7 +18,6 @@ user_route.set("views", "./views/users");
 
 user_route.get("/", userController.loadHome);
 
-
 user_route.get("/login", auth.isLogout, userController.loginLoad);
 
 user_route.get("/register", userController.loadRegister);
@@ -71,10 +70,13 @@ user_route.get("/loadCheckout",userController.loadCheckout);
 
 user_route.post("/orderSuccess",userController.placeOrder);
 
+user_route.get("/editcheckoutAddress",userController.editCheckoutAddress);
+
+user_route.post("/editcheckoutAddress",userController.editUpdateCheckoutAddress);
+
 user_route.get("/cancelOrder",userController.cancelOrder);
 
 user_route.get("/vieworder",auth.isLogin,userController.viewOrderDetails);
-
 
 user_route.get("/logout",userController.userLogout);
 

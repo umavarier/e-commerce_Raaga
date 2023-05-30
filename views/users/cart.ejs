@@ -1,5 +1,5 @@
 <%- include ('../layouts/header.ejs') %>
-<body style="background-color:#111348;">
+<body >
 <br>
     <!-- Breadcrumb Start -->
     <div class="container-fluid">
@@ -73,7 +73,7 @@
 
                                  <div class="d-flex flex-column justify-content-center align-items-center mt-1 mb-5 ">
                                         
-                                    <h4 style="color:white;">Your Cart is Empty!! </h4>  
+                                    <h5>Your Cart is Empty!! </h6>  
                                     <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_4yZa2Y0rpb.json"  background="transparent"  speed="2"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
                                 
                                     
@@ -153,7 +153,7 @@
                     <div class="col-lg-4">
 
                         <h5 class="section-title position-relative text-uppercase mb-3"><span
-                              style="color: white ;"  class="pr-3">Cart Summary</span></h5>
+                              style="color: rgb(3, 3, 3) ;"  class="pr-3">Cart Summary</span></h5>
                         <div class=" p-30 mb-5">
                             <div class="pt-2">
                                 <div class="d-flex text-light justify-content-between mt-2">
@@ -181,95 +181,95 @@
 
                 <!-- Back to Top -->
 </body>
+<script>
+    jQuery(document).ready(function () {
+        // This button will increment the value
+        $('[data-quantity="plus"]').click(function (e) {
+            // Stop acting like a button
+            e.preventDefault();
+            // Get the field name
+            fieldName = $(this).attr('data-field');
+            // Get its current value
+            Val = $('input[name=' + fieldName + ']').val()
+            console.log(Val);
+            var values = Val.split(',')
+            var currentVal = parseInt(values[0])
+            var stock = parseInt(values[1])
+            console.log(currentVal, stock);
+            // If is not undefined
+            if (!isNaN(currentVal)) {
+                // Increment
+                if (currentVal == stock) {
 
-                <script>
-                    jQuery(document).ready(function () {
-                        // This button will increment the value
-                        $('[data-quantity="plus"]').click(function (e) {
-                            // Stop acting like a button
-                            e.preventDefault();
-                            // Get the field name
-                            fieldName = $(this).attr('data-field');
-                            // Get its current value
-                            Val = $('input[name=' + fieldName + ']').val()
-                            console.log(Val);
-                            var values = Val.split(',')
-                            var currentVal = parseInt(values[0])
-                            var stock = parseInt(values[1])
-                            console.log(currentVal, stock);
-                            // If is not undefined
-                            if (!isNaN(currentVal)) {
-                                // Increment
-                                if (currentVal == stock) {
+                } else {
+                    $('input[name=' + fieldName + ']').val(currentVal + 1);
+                }
+            } else {
+                // Otherwise put a 0 there
+                $('input[name=' + fieldName + ']').val(0);
+            }
+        });
+        // This button will decrement the value till 0
+        $('[data-quantity="minus"]').click(function (e) {
+            // Stop acting like a button
+            e.preventDefault();
+            // Get the field name
+            fieldName = $(this).attr('data-field');
+            // Get its current value
+            Val = $('input[name=' + fieldName + ']').val()
+            console.log(Val);
+            var values = Val.split(',')
+            var currentVal = parseInt(values[0])
+            // If it isn't undefined or its greater than 0
+            if (!isNaN(currentVal) && currentVal > 1) {
+                // Decrement one
+                $('input[name=' + fieldName + ']').val(currentVal - 1);
+            } else {
+                // Otherwise put a 0 there
+                $('input[name=' + fieldName + ']').val(1);
+            }
+        });
+    });
 
-                                } else {
-                                    $('input[name=' + fieldName + ']').val(currentVal + 1);
-                                }
-                            } else {
-                                // Otherwise put a 0 there
-                                $('input[name=' + fieldName + ']').val(0);
-                            }
-                        });
-                        // This button will decrement the value till 0
-                        $('[data-quantity="minus"]').click(function (e) {
-                            // Stop acting like a button
-                            e.preventDefault();
-                            // Get the field name
-                            fieldName = $(this).attr('data-field');
-                            // Get its current value
-                            Val = $('input[name=' + fieldName + ']').val()
-                            console.log(Val);
-                            var values = Val.split(',')
-                            var currentVal = parseInt(values[0])
-                            // If it isn't undefined or its greater than 0
-                            if (!isNaN(currentVal) && currentVal > 1) {
-                                // Decrement one
-                                $('input[name=' + fieldName + ']').val(currentVal - 1);
-                            } else {
-                                // Otherwise put a 0 there
-                                $('input[name=' + fieldName + ']').val(1);
-                            }
-                        });
-                    });
+    function update(id, plus, amt) {
 
-                    function update(id, plus, amt) {
+        currentqty = document.getElementById(id)
+        console.log(plus, amt);
+        if (plus) {
+            if (currentqty.value < parseInt(plus)) {
+                currentqty.parentNode.querySelector('input[type=number]').stepUp();
+            }
+        } else {
+            currentqty.parentNode.querySelector('input[type=number]').stepDown()
+        }
+        setTimeout(() => {
+            console.log("currrent====" + currentqty.value);
+            console.log('qty==' + currentqty.value);
+            let qty = document.getElementById(id).value;
+            console.log(currentqty.value, plus);
+            if (currentqty.value == plus && currentqty.value == 0) {
+                console.log(currentqty.value, plus);
+            } else {
 
-                        currentqty = document.getElementById(id)
-                        console.log(plus, amt);
-                        if (plus) {
-                            if (currentqty.value < parseInt(plus)) {
-                                currentqty.parentNode.querySelector('input[type=number]').stepUp();
-                            }
-                        } else {
-                            currentqty.parentNode.querySelector('input[type=number]').stepDown()
-                        }
-                        setTimeout(() => {
-                            console.log("currrent====" + currentqty.value);
-                            console.log('qty==' + currentqty.value);
-                            let qty = document.getElementById(id).value;
-                            console.log(currentqty.value, plus);
-                            if (currentqty.value == plus && currentqty.value == 0) {
-                                console.log(currentqty.value, plus);
-                            } else {
-
-                                $.ajax({
-                                    url: '/updateCart',
-                                    type: 'POST',
-                                    data: { quantity: qty, _id: id },
-                                    success: function (data) {
-                                        console.log(data.test);
-                                        document.getElementById("total").innerHTML = "Rs " + data.test;
-                                        console.log(data.test);
-                                        console.log(qty * data.price);
-                                        console.log(amt);
-                                        document.getElementById(amt).innerHTML = qty * data.price;
-                                    },
-                                    error: function (jqXHR, textStatus, errorThrown) {
-                                        console.log(textStatus, errorThrown);
-                                    }
-                                })
-                            }
-                        }, 50);
+                $.ajax({
+                    url: '/updateCart',
+                    type: 'POST',
+                    data: { quantity: qty, _id: id },
+                    success: function (data) {
+                        console.log(data.test);
+                        document.getElementById("total").innerHTML = "Rs " + data.test;
+                        console.log(data.test);
+                        console.log(qty * data.price);
+                        console.log(amt);
+                        document.getElementById(amt).innerHTML = qty * data.price;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus, errorThrown);
                     }
-                </script>
+                })
+            }
+        }, 50);
+    }
+</script>
+                
                 <%- include ('../layouts/footer.ejs') %>

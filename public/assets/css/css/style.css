@@ -207,10 +207,14 @@ ol {
 .carousel-image {
 	width:100% ;
 	height: fit-content;
-	max-height: 600px; /* Adjust the maximum height as needed */
+	max-height: 765px; /* Adjust the maximum height as needed */
   }
   
-
+  @font-face {
+	font-family: 'Beau Rivage';
+	src: url('fonts/beau-rivage.ttf') format('truetype');
+  }
+  
 @keyframes loader {
 	0% {
 		-webkit-transform: rotate(0deg);

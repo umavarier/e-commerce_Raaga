@@ -454,6 +454,39 @@ const viewOrderDetails = async (req, res,next) => {
 
     }
 }
+const editCheckoutAddress = async (req, res,next) => {
+    try {
+        const id = req.query.id;
+        const addressData = await address.findById({ _id: id });
+        res.render("editCheckoutAddress", { user: req.session.user, address: addressData });
+    } catch (error) {
+        next(error);
+
+    }
+}
+
+
+const editUpdateCheckoutAddress = async (req, res,next) => {
+    try {
+        const id = req.body.id;
+        
+        const upadteAddres = await address.findByIdAndUpdate({ _id: id }, {
+            $set: {
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                country: req.body.country,
+                address: req.body.address,
+                city: req.body.city,
+                zip: req.body.zip,
+                mobile: req.body.mno
+            }
+        })
+        res.redirect("/loadCheckout")
+    } catch (error) {
+        next(error);
+
+    }
+}
 
 
 const userLogout = async (req, res,next) => {
@@ -493,4 +526,6 @@ module.exports = {
     placeOrder,
     viewOrderDetails,
     cancelOrder,
+    editUpdateCheckoutAddress,
+    editCheckoutAddress,
 }
