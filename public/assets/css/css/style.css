@@ -45,7 +45,7 @@ h4,
 h5,
 h6 {
 	margin: 0;
-	color: #111111;
+	color: #000000;
 	font-weight: 400;
 	font-family: "Montserrat", sans-serif;
 }
@@ -207,7 +207,7 @@ ol {
 .carousel-image {
 	width:100% ;
 	height: fit-content;
-	max-height: 700px; /* Adjust the maximum height as needed */
+	max-height: 600px; /* Adjust the maximum height as needed */
   }
   
 
@@ -1026,7 +1026,7 @@ ol {
 .breadcrumb__links span {
 	font-size: 15px;
 	font-weight: 500;
-	color: #888888;
+	color: #342b2b;
 	display: inline-block;
 }
 

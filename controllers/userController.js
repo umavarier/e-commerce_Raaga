@@ -136,14 +136,15 @@ const loadUserProfile = async (req, res,next) => {
     try {
         const usid = req.session.user_id;
         const user1 = await User.findOne({ _id: usid });
+      
         const adid = await address.find({ userId: usid });
         const addressData = await address.find({ userId: usid });
         const details = await User.findOne({ _id: usid });
-        // const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate("products.item.productId");
+        const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate("products.item.productId");
         console.log(details);
         console.log("user1"+user1)
         
-        res.render("profile", { user: req.session.user, userAddress: adid, userData: user1, address: addressData})
+        res.render("profile", { user: req.session.user, userAddress: adid, userData: user1, address: addressData , order: orderData, details: details})
     } catch (error) {
         next(error);
 
@@ -338,6 +339,121 @@ const loadDetails = async (req, res,next) => {
 
     }
 };
+const loadCheckout = async (req, res) => {
+    try {
+       
+        const userData = req.session.user_id;
+        const addresss = await address.find({ userId: userData });
+        const userDetails = await User.findById({ _id: userSession })
+        const completeUser = await userDetails.populate('cart.item.productId')
+        res.render("checkout", { user: req.session.user, address: addresss, checkoutdetails: completeUser.cart });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+let Norder;
+const placeOrder = async (req, res,next) => {
+    
+    try {
+        
+        let nAddress;
+        if (req.body.address == 0) {
+            userSession = req.session
+                nAddress = await new address({
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                country: req.body.country,
+                address: req.body.details,
+                city: req.body.city,
+                state: req.body.state,
+                zip: req.body.zip,
+                mobile: req.body.mno,
+                userId: userSession.user_id
+            })
+            const newAddress = await nAddress.save();
+            
+        }
+        else {
+            nAddress = await address.findOne({ _id: req.body.address });
+        }
+
+
+        const userData = await User.findOne({ _id: req.session.user_id })
+        
+        Norder = new order({
+            userId: req.session.user_id,
+            address: nAddress,
+            payment: {
+                method: 'COD',
+                amount: req.body.amount,
+
+            },
+            products: userData.cart,
+        });
+
+        if (req.body.payment == "COD") {
+            await Norder.save();
+            const productData = await products.find()
+            for (let key of userData.cart.item) {
+                for (let prod of productData) {
+
+                    if (new String(prod._id).trim() == new String(key.productId._id).trim()) {
+                        prod.stock = prod.stock - key.qty
+                        await prod.save()
+                    }
+                }
+            }
+            await User.updateOne({ _id: req.session.user_id }, { $unset: { cart: 1 } })
+            res.render("orderSuccess", { user: req.session.user})
+        }
+     
+
+    } catch (error) {
+        next(error);
+
+    }
+}
+const cancelOrder = async (req, res,next) => {
+    try {
+        const id = req.query.id;
+        const orderDetails = await order.findById({ _id: id });
+        let state = "cancelled"
+        await order.findByIdAndUpdate({ _id: id }, { $set: { status: "cancelled" } })
+        if (state == "cancelled") {
+            const productData = await products.find()
+            const orderData = await order.findById({ _id: id });
+
+            for (let key of orderData.products.item) {
+                for (let prod of productData) {
+                    
+                    if (new String(prod._id).trim() == new String(key.productId).trim()) {
+                        prod.stock = prod.stock + key.qty
+                        await prod.save()
+                    }
+                }
+            }
+        }
+        res.redirect("/userProfile")
+    } catch (error) {
+        next(error);
+
+    }
+}
+
+const viewOrderDetails = async (req, res,next) => {
+    try {
+        
+        const id = req.query.id;
+        const users = req.session.user_id
+        const orderDetails = await order.findById({ _id: id });
+        const addres = await address.findById({ _id: users })
+        await orderDetails.populate('products.item.productId')
+        res.render("viewOrderDetails", { user: req.session.user, orders: orderDetails });
+    } catch (error) {
+        next(error);
+
+    }
+}
 
 
 const userLogout = async (req, res,next) => {
@@ -373,4 +489,8 @@ module.exports = {
     deleteAddressCart,
     loadShop,
     loadDetails,
+    loadCheckout,
+    placeOrder,
+    viewOrderDetails,
+    cancelOrder,
 }

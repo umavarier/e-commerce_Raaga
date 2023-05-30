@@ -67,6 +67,13 @@ user_route.post("/updateCart",cartController.updateCart);
 
 user_route.get('/deleteCart',cartController.deleteCart);
 
+user_route.get("/loadCheckout",userController.loadCheckout);
+
+user_route.post("/orderSuccess",userController.placeOrder);
+
+user_route.get("/cancelOrder",userController.cancelOrder);
+
+user_route.get("/vieworder",auth.isLogin,userController.viewOrderDetails);
 
 
 user_route.get("/logout",userController.userLogout);
