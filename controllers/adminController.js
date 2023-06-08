@@ -50,9 +50,57 @@ const securePassword = async (password) => {
     }
   };
   const loadDashboard = async (req, res, next) => {
-    try {    
-      const userData = await User.findById({ _id: req.session.admin_id });  
-      res.render('home', { admin: userData });
+    try {
+      
+      const products = await Product.find();
+      let pds = [];
+      let qty = [];
+  
+      products.forEach((product) => {
+        if (product.stock <= 30) {
+          pds.push(product.name);
+          qty.push(product.stock);
+        }
+      });
+  
+      const arr = [];
+      const order = await orders.find().populate('products.item.productId');
+  
+      for (let orders of order) {
+        for (let product of orders.products.item) {
+          if (orders.status === 'Delivered'||orders.status === 'delivered'||orders.status === 'reject return') {
+            const index = arr.findIndex((obj) => obj.product == product.productId.name);
+            if (index !== -1) {
+              arr[index].qty += product.qty;
+            } else {
+              arr.push({ product: product.productId.name, qty: product.qty });
+            }
+          }
+        }
+      }
+  
+      const key1 = [];
+      const key2 = [];
+      arr.forEach((obj) => {
+        key1.push(obj.product);
+        key2.push(obj.qty);
+      });
+  
+      const sales = key2.reduce((value, number) => {
+        return value + number;
+      }, 0);
+  
+      let totalRevenue = 0;
+  
+      for (let orders of order) {
+        if (orders.status === 'Delivered'||orders.status === 'delivered'||orders.status === 'reject return') {
+          totalRevenue += orders.products.totalPrice;
+        }
+      }
+  
+      const userData = await User.findById({ _id: req.session.admin_id });
+  
+      res.render('home', { admin: userData, key1, key2, pds, qty, sales, totalRevenue });
     } catch (error) {
       next(error);
     }
@@ -256,6 +304,41 @@ const addUser = async (req, res,next) => {
     }
   };
 
+  const addCategoryOffer = async (req, res,next) => {
+    try {
+      const userData = await User.findById({ _id: req.session.admin_id });
+      const categories = await category.find();
+      res.render("addCategoryOffer", { admin: userData, categories:categories, message: "" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  const addCategoryOfferdir = async (req, res, next)=>{
+    try {
+      const { categoryId,name, discountPercentage, startDate, endDate, isAvailable} = req.body;
+      const cat =await category.findByIdAndUpdate(categoryId, {
+        name,
+        discountPercentage,
+        startDate,
+        endDate,
+        isAvailable,
+      });
+      cat.save();
+      res.redirect("/admin/category")
+    } catch(error) {
+        next(error);
+    }
+  };
+  // const loadCategoryOffer = async(req, res, next) =>{
+  //   try {
+  //     const categories = await category.findById(req.body)
+  //     res.render("categoryOffer",{categories:})
+  //   }catch(error) {
+  //     console.log(error)
+  //   }
+  // }
+
   const logout = async (req, res,next) => {
     try {
       req.session.admin_id = null;
@@ -275,6 +358,8 @@ const addUser = async (req, res,next) => {
     loadCategory,
     addCategories,
     addCategoriesredir,
+    addCategoryOffer,
+    addCategoryOfferdir,
     unlistCategory,
     editCategory,
     editUpdateCategory,
@@ -282,6 +367,5 @@ const addUser = async (req, res,next) => {
     loadOrder,
     sortOrder,
     updateStatus,
-    viewOrderDetails,
-
+    viewOrderDetails,    
   }

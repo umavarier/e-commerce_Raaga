@@ -1,7 +1,7 @@
 <%- include ('../layouts/header.ejs') %>
     <br>
 
-
+<body style="background-color: #0b0c2a;"
     <div class="container-fluid">
         <div class="row px-xl-5">
             <div class="col-12">
@@ -67,115 +67,146 @@
     <!-- Checkout Start -->
 
     <form action="/orderSuccess" method="post">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <h5 class="section-title text-uppercase mb-3">New Address</h5>
-                    <div class="address-form p-4">
+        <div class="container-fluid">
+                <div class="row px-xl-5">
+                    <div class="col-lg-8">
+
+                        <h5 style=" margin-right: 4%; color: white;"
+                        class="col-md-12 form-group section-title position-relative text-uppercase mb-3"><span class=" pr-3">Choose Address</span></h5>
+                    <div >
                         
+                        <div class="col-md-12">
+                            <div class="col-12 form-group d-flex justify-content">
+                                <% for(i=0;i<address.length;i++){%>
+                                    <div  style="color: white; background: #0b0c2a; border-width: 3px;  border-color: rgb(76, 76, 76);"
+                                        class="address-selection-card col p-6 pb-4">
+                                        <input style="margin-left: 10px; margin-top: 5px;" type="radio" name="address" id="addressid"
+                                            value="<%=address[i]._id%>" <% if(i==0){%>checked<%}%> onchange="toggleAddressForm(this)">
+                                            <label>
+                                                <h5>
+                                                    Address <%=i+1%>
+                                                </h5>
+                                                <%=address[i].firstname%>
+                                                    <%=address[i].lastname%>
+                                                        <br>
+                                                        <%=address[i].address%>
+                                                            <br>
+                                                            <%=address[i].state%>
+                                                                <br>
+                                                                <%=address[i].city%>
+                                                                    <br>
+                                                                    <%=address[i].country%>
+                                                                        <br>
+                                                                        <%=address[i].zip%>
+                                            </label>
+                                            
+                                            <div>
+                                                <a href="/editcheckoutAddress?id=<%=address[i]._id%>"><button
+                                                    style="margin-top: 10px; margin-left: 5%; border-radius: 5px;" type="button"
+                                                    class="btn-default">edit</button></a>
+                                                    <a href="/deleteAddressCart?id=<%=address[i]._id%>"><button
+                                                        style="margin-top: 10px; margin-left: 5%;background-color: rgb(181, 57, 57); color: white; border-radius: 5px;" type="button"
+                                                        class="btn-default">delete</button></a>
+                                            </div>
+                                            
+                                    </div>
+                                    <%}%>
+                            </div>
+                        </div>
+                    <hr>
+
+                    </div>  
+
+                    <h5 style="color: white;" class="section-title position-relative text-uppercase mb-3"><span
+                            class=" pr-3">New Address</span></h5>
                     <div class=" p-30">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="custom-control custom-checkbox" >
                                     <input  style="margin-left: 10px;" type="radio" name="address" id="addressid" value="0">
-                                    <label class="text-dark" style="color:black;">Ship to different address</label>
+                                    <label class="text-light">Ship to different address</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <br>
-                    <div class="form-group">
-                        <input class="form-control" type="text" name="firstname" placeholder="First Name">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" type="text" name="lastname" placeholder="Last Name">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" name="mno" type="text" placeholder="Phone">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" type="text" name="details" placeholder="Address">
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <input class="form-control" type="text" name="country" placeholder="Country">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <input class="form-control" type="text" name="city" placeholder="City">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <input class="form-control" type="text" name="state" placeholder="State">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <input class="form-control" type="text" name="zip" placeholder="Postal Code">
-                        </div>
-                    </div>
-                </div>
-                                
-                                <h5 style=" margin-right: 4%; color: black;"
-                                    class="col-md-12 form-group section-title position-relative text-uppercase mb-3"><span class=" pr-3">Choose Address</span></h5>
-                                <div >
-                                    
-                                    <div class="col-md-12">
-                                        <!-- <div class="col-9 form-group d-flex justify-content"> -->
-                                            <% for(i=0;i<address.length;i++){%>
-                                                <div  style="color: white; background: #0b0c2a; border-color: rgb(76, 76, 76);"
-                                                    class="address-selection-card col p-6 pb-4">
-                                                    <input style="margin-left: 10px; margin-top: 5px;" type="radio" name="address" id="addressid"
-                                                        value="<%=address[i]._id%>" <% if(i==0){%>checked<%}%> onchange="toggleAddressForm(this)">
-                                                        <label>
-                                                            <h6 style="color:white;">
-                                                                Address <%=i+1%>
-                                                            </h6>
-                                                            <br>
-                                                            <%=address[i].firstname%>
-                                                                <%=address[i].lastname%>
-                                                                    <br>
-                                                                    <%=address[i].address%>
-                                                                        <br>
-                                                                        <%=address[i].state%>
-                                                                            <br>
-                                                                            <%=address[i].city%>
-                                                                                <br>
-                                                                                <%=address[i].country%>
-                                                                                    <br>
-                                                                                    <%=address[i].zip%>
-                                                        </label>
-                                                        
-                                                        <div>
-                                                            <a href="/editcheckoutAddress?id=<%=address[i]._id%>"><button
-                                                                style="margin-top: 10px; margin-left: 5%; border-radius: 5px;" type="button"
-                                                                class="btn-default">edit</button></a>
-                                                                <a href="/deleteAddressCart?id=<%=address[i]._id%>"><button
-                                                                    style="margin-top: 10px; margin-left: 5%;background-color: rgb(181, 57, 57); color: white; border-radius: 5px;" type="button"
-                                                                    class="btn-default">delete</button></a>
-                                                        </div>
-                                                        
-                                                </div>
-                                                <%}%>
+                    <div class=" mb-5 text-light" id="shipping-address">
+                        <div class=" tr p-30">
+                            <div class="">
+                                <div id="hidden-division" >
+                                    <!-- <div class="row"> -->
+                                        <div class="col-md-8 form-group">
+                                            <!-- <label>First Name</label> -->
+                                            <input class="form-control mb-1" type="text" name="firstname"
+                                                placeholder="First Name">
                                         </div>
+                                        <div class="col-md-8 form-group">
+                                            <!-- <label>Last Name</label> -->
+                                            <input class="form-control mb-1" type="text" name="lastname"
+                                                placeholder="Last Name">
+                                        </div>
+                                    <!-- </div> -->
+                                    <div class="col-md-8 form-group">
+                                        <!-- <label>Phone</label> -->
+                                        <input class="form-control mb-1" name="mno" type="text" placeholder="Number">
+                                    </div> 
+                                    
+                                    <div class="col-md-8 form-group">
+                                        <!-- <label>Address</label> -->
+                                        <input class="form-control mb-1" type="text" name="details" placeholder="Address">
                                     </div>
-                                <hr>
-
-                                </div>
+                                    <!-- <div class="row"> -->
+                                        <div class="col-md-8 form-group">
+                                            <!-- <label>Country</label> -->
+                                            <input class="form-control mb-1" type="text" name="country" placeholder="Country">
+                                        </div>
+                                        <div class="col-md-8 form-group">
+                                            <!-- <label>City</label> -->
+                                            <input class="form-control mb-1" type="text" name="city" placeholder="City">
+                                            </div>
+                                        
+                                    <!-- </div> -->
+                                    <!-- <div class="row"> -->
+                                        
+                                        <div class="col-md-8 form-group">                                           
+                                            <input class="form-control mb-1 " type="text" name="state" placeholder="State">
+                                        </div>                                        
+                                        <div class="col-md-5 form-group">                                           
+                                            <input class="form-control mb-4" type="text" name="zip" placeholder="Post code">
+                                        </div>
+                                    <!-- </div> -->
+                                    
+                                     
+                                 </div>
+                                
+                               
                             </div>
                         </div>
                     </div>
                 </div>  
-                <div class="container">
+                <div class="col-lg-4">
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span
+                        class=" pr-3 text-light">Coupons</span></h5>
+                    <div class="input-group" style="margin-bottom: 20px;">                        
+    
+                        <div class="input-group-append mt-2">
+                            <input style="border-radius: 5px; height: 38px;" name="coupon" id="coupon">
+                            <button style="height: 38px;" type="button" class="btn btn-danger ms-2" onclick="apply()">Apply</button>&nbsp; &nbsp;
+                            <a data-toggle="modal" class="btn btn-secondary btn-sm" style="border-radius: 5px;" type="button"
+                                href="#exampleModalScrollable1">Show Coupons</a>
+                        </div>
+                    </div>
                     <hr>
                     <hr>
-                    <h5 style="color: white;" class="section-title position-relative text-uppercase mb-3 "><span
-                            class=" pr-3" style="color:black;">Order Total</span></h5>
+                    <h5 style="color: white;" class="section-title position-relative text-uppercase mb-3"><span
+                            class=" pr-3">Order Total</span></h5>
                     <div class=" p-30 mb-5">
 
                         <div class="border-bottom">
                             <h6 style="color: red;" id="msg"></h6>
                             <div style="color: white;" class="d-flex justify-content-between">
-                                <h6 class="mb-3">Products</h6>
-                                <h6 class="mb-3">Price</h6>
+                                <h6 class="mb-3" style="color:aliceblue;">Products</h6>
+                                <h6 class="mb-3" style="color:aliceblue;">Price</h6>
                             </div>
                             <% for(let key of checkoutdetails.item){ %>
                                 <div class="d-flex justify-content-between text-light">
@@ -197,12 +228,12 @@
                                 </h6>
                             </div>
                             <div class="d-flex justify-content-between text-light">
-                                <h6 class="font-weight-medium">Discount</h6>
-                                <h6 id="dis" class="font-weight-medium">0</h6>
+                                <h6 class="font-weight-medium" style="color:aliceblue;">Discount</h6>
+                                <h6 id="dis" class="font-weight-medium" style="color:aliceblue;">--</h6>
                             </div>
                             <div class="d-flex justify-content-between text-light">
-                                <h6 class="font-weight-medium">Reduction Amount</h6>
-                                <h6 id="amt" class="font-weight-medium">0</h6>
+                                <h6 class="font-weight-medium" style="color:aliceblue;">Reduction Amount</h6>
+                                <h6 id="amt" class="font-weight-medium" style="color:aliceblue;">--</h6>
                             </div>
 
 
@@ -210,8 +241,8 @@
                         <div class="pt-2">
 
                             <div style="color: white;" class="d-flex justify-content-between mt-2">
-                                <h5>Total</h5>
-                                <h5 id="gT">Rs <%=checkoutdetails.totalPrice%>
+                                <h5 style="color:aliceblue;">Total</h5>
+                                <h5 id="gT" style="color:aliceblue;">Rs <%=checkoutdetails.totalPrice%>
                                 </h5>
 
                                 <input id="last" type="hidden" value="<%=checkoutdetails.totalPrice%>" name="amount">
@@ -219,7 +250,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-5 ">                       
+                    <div class="mb-5 ">
+
+                        <!-- include wallet -->
 
                         <h5 style="color: white;" class="section-title position-relative text-uppercase mb-3"><span
                                 class=" pr-3">Payment</span></h5>
@@ -228,13 +261,20 @@
                                 <div class="custom-control custom-radio">
                                     <input type="radio" class="custom-control-input" checked name="payment" id="COD" value="COD"
                                         >
-                                    <label class="custom-control-label" style="color:black;" for="COD">COD</label>
+                                    <label class="custom-control-label" for="COD">COD</label>
                                 </div>
-                            </div>                           
+                            </div>
+                            <div class="form-group">
+                            <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="payment" id="Online"
+                                    value="Online">
+                                <label class="custom-control-label " for="Online">Online payment</label> 
+                                <br>
+                            </div>
                         </div>
 
-                            <button  style="height: 40px; align-items: center; " class="btn btn-short btn-primary font-weight-bold  mt-3" type="submit">Place
-                                Order</button>
+                            <button  style="height: 40px; align-items: center;" class="btn btn-block btn-danger font-weight-bold mt-3" type="submit">
+                                Place Order</button>
 
 
                                 
@@ -261,6 +301,38 @@
 </style>
 
 <!-- Modal HTML -->
+<div class="modal fade" id="exampleModalScrollable1" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalScrollableTitle">Coupons</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="total" value="<%=coupon.length %>">
+                <% for(i=0;i<coupon.length;i++){ %>
+                    <% if(coupon[i].isAvailable){%>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <span style="color: rgb(33, 220, 20);font-size:x-large;"><strong id="<%=coupon[i]._id%>"><%= coupon[i].name %></strong></span>
+                                <button id="copy-btn" class="bg-dark" style="border: none;" onclick="copyText('<%=coupon[i]._id%>')"><i style="color: rgb(217, 233, 160);" class="fas fa-copy"></i></button>
+                                <h6><%=coupon[i].description %></h6>
+                                <h6>Min cart value-<%= coupon[i].minimumvalue%></h6>
+                                <h6 id="<%=i%>exp">expires in <%=coupon[i].expiryDate.toLocaleDateString()%></h6>
+                            </div>
+                        </div>
+                        <hr>
+                    <%}%>
+                <% } %>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--model end-->
    
@@ -338,19 +410,17 @@ addressRadio.addEventListener("change", function() {
 
     </script>
 
-    <script>
-
-        
+    <script>        
         function apply() {
             console.log("sample");
-            cop = document.getElementById('coupon').value
-            console.log(cop);
+            coup = document.getElementById('coupon').value
+            console.log(coup);
             subT = document.getElementById('subTotal').value
             console.log(subT);
             $.ajax({
                 url: '/applyCoupon',
                 type: 'POST',
-                data: { coupon: cop, totalValue: subT },
+                data: { coupon: coup, totalValue: subT },
                 success: function (data) {
                     console.log(data);
                     if (data.state) {

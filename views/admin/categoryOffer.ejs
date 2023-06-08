@@ -1,0 +1,33 @@
+<%- include ('../layouts/adminHeader.ejs') %>
+<body>
+    <h1>Create Category Offer</h1>
+  
+    <form action="/admin/addCategoryOffer" method="post">
+      <label for="categoryId">Category:</label>
+      <select name="categoryId">
+        <% categories.forEach(function(category) { %>
+          <option value="<%= category._id %>"><%= category.name %></option>
+        <% }); %>
+      </select>
+      <br>
+      <label for="discountPercentage">Discount Percentage:</label>
+      <input type="number" name="discountPercentage" required>
+      <br>
+      <label for="startDate">Start Date:</label>
+      <input type="date" name="startDate" required>
+      <br>
+      <label for="endDate">End Date:</label>
+      <input type="date" name="endDate" required>
+      <br>
+      <label for="isAvailable">Is Available:</label>
+      <input type="checkbox" name="isAvailable">
+      <br>
+      <button type="submit">Create Offer</button>
+    </form>
+
+
+
+
+
+
+<%- include ('../layouts/adminFooter.ejs') %>

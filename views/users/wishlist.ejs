@@ -1,0 +1,137 @@
+<%- include("../layouts/header.ejs") %>
+<body style="background-color: #0b0c2a;">
+    <br>
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb mb-30">
+                    <a class="breadcrumb-item text-light text-decoration-none" href="/Home">Home</a>
+                    <span class="breadcrumb-item active">wishlist</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- wishlist start-->
+    <% if(wishlistProducts.item.length===0 ) { %>
+        <style>
+            @import url(http://fonts.googleapis.com/css?family=Calibri:400,300,700);
+
+            /* body {
+
+            background-color: #000000;
+        }
+*/
+            .card {
+                margin-bottom: 100px;
+                background-color: transparent;
+                border: 0;
+                -webkit-transition: all .3s ease;
+                transition: all .3s ease;
+                letter-spacing: .5px;
+                border-radius: 8px;
+                -webkit-box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, .05);
+                box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, .05);
+            }
+
+            .card .card-header {
+                background-color: #000000;
+                border-bottom: none;
+                padding: 24px;
+                border-bottom: 1px solid #000000;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+
+            .card-header:first-child {
+                border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+            }
+
+
+            .card .card-body {
+                padding: 30px;
+                background-color: transparent;
+            }
+
+            .letter {
+                color: aliceblue;
+            }
+
+            .btnn {
+                text-align: center;
+                background-color: #cbb739 !important;
+                padding: 20px;
+                border-radius: 20px;
+                font-weight: 200;
+                color: rgb(0, 0, 0);
+            }
+        </style>
+        <div class="container-fluid">
+            <div class="d-flex flex-column justify-content-center align-items-center mt-1 mb-5 ">
+                <h5>Your WISHLIST is Empty!! </h6>
+                    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_4yZa2Y0rpb.json"
+                        background="transparent" speed="2" style="width: 300px; height: 300px;" loop
+                        autoplay></lottie-player>
+            </div>
+        </div>
+        <% } else { %>
+
+         
+                <div class="container-fluid">
+                    <div class="row px-xl-5">
+                        <div class="col-12">
+                            <table style="border-radius: 25px;"
+                                class="table table-dark table-borderless table-hover text-center">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Image</th>
+                                        <th>Price</th>
+                                        <th>Move to Cart</th>
+                                        <th>Remove</th>
+                                    </tr>
+                                </thead>
+                                <% for( let key of wishlistProducts.item) { %>
+                                    <tbody class="align-middle">
+                                        <tr>
+                                            <td class="align-middle text-uppercase">
+                                                <%= key.productId.name %>
+                                            </td>
+                                            <td class="align-middle"><a
+                                                    href="/viewDetails?id=<%=key.productId._id%>"><img class="rounded"
+                                                        src="/uploads/<%=key.productId.image[0]%>" alt=""
+                                                        style="width: 50px;"></a>
+                                            </td>
+                                            <td class="align-middle text-uppercase">
+                                                <%= key.productId.price %>
+                                            </td>
+                                            <td class="align-middle"><a
+                                                    href="/addCartremoveWishlist?id=<%=key.productId._id%>"><button
+                                                        style="width: 100px;"
+                                                        class="btn btn-sm btn-primary">MOVE</button></a></td>
+                                            <td class="align-middle"><a
+                                                    href="/deleteWishlist?id=<%=key.productId._id%>"><button
+                                                        class="btn btn-sm btn-danger"><i
+                                                            class="fas fa-remove"></i></button></a></td>
+
+                                <% } %>
+                                
+                        
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <%}%>
+            <% if(wishlistProducts.item.length<2&&wishlistProducts.item.length>0){ %>
+                <div style="margin-top: 140px;">
+
+                </div>
+                <% } %>
+                <!-- Cart End -->
+
+                <!-- Back to Top -->
+                <br>
+<%- include ('../layouts/footer.ejs') %>                                

@@ -5,21 +5,23 @@ const bcrypt = require("bcrypt");
 
 
 const loadForgotPassword = async (req, res) => {
+    // console.log("why??")   //not showing
     try {
+        // console.log("why??") 
         res.render('forgotpassword')
     } catch (error) {
         console.log(error.message);
     }
 }
 
-const loadVeriftyForgotPassword = async (req, res) => {
+const loadVerifyForgotPassword = async (req, res) => {
     const user = await User.find();
     mobile = req.body.mobnumber;
     const userDetails = await User.findOne({ mobile: mobile })
     if (userDetails) {
         try {
             // newOtp = sms.sendMessage(mobile, res);
-            newOtp=1234
+            newOtp=1816
             console.log(newOtp);
             res.render("forgetPasswordVOtp", { mobile: mobile, newOtp: newOtp })
         } catch (error) {
@@ -74,7 +76,7 @@ const resetPassword = async (req, res) => {
 
 module.exports = {
     loadForgotPassword,
-    loadVeriftyForgotPassword,
+    loadVerifyForgotPassword,
     verifyOtp,
     resetPassword,
     resendOtp

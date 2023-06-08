@@ -110,7 +110,6 @@ const editProduct = async (req, res) => {
     console.log(error.message)
   }
 }
-
   
   const loadAddProducts = async (req, res) => {
     try {
@@ -120,8 +119,7 @@ const editProduct = async (req, res) => {
     } catch (error) {
       console.log(error.message);
     }
-  };
-  
+  };  
   
   const addAddProducts = async (req, res) => {
     if (req.files.length != 0) {

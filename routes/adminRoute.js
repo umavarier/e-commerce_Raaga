@@ -5,7 +5,9 @@ const multer = require('../middleware/multer');
 const config=require("../config/config");
 const auth=require('../middleware/adminAuth');
 const adminController=require('../controllers/adminController');
-const productController=require('../controllers/productController')
+const productController=require('../controllers/productController');
+const couponController=require('../controllers/couponController');
+const bannerController = require('../controllers/bannerController');
 const errorHandler = require('../middleware/errorHandler');
 
 require('dotenv').config();
@@ -20,7 +22,7 @@ require('dotenv').config();
 
 admin_route.set('views','./views/admin');
 
-admin_route.use(express.static('public'));
+admin_route.use(express.static('public')); //
 
 admin_route.get('/',auth.isLogout,adminController.loadLogin);
 
@@ -46,6 +48,12 @@ admin_route.get('/editCategory',adminController.editCategory);
 
 admin_route.post('/editCategory',adminController.editUpdateCategory);
 
+admin_route.get("/addCategoryOffer",adminController.addCategoryOffer);
+
+admin_route.post("/addCategoryOffer",adminController.addCategoryOfferdir);
+
+// admin_route.get("/categoryOffer",adminController.loadCategoryOffer)
+
 admin_route.get('/product',productController.loadProduct);
 
 admin_route.get('/addProduct', productController.loadAddProducts);
@@ -64,7 +72,35 @@ admin_route.get('/order', adminController.loadOrder);
 
 admin_route.post("/updateStatus",adminController.updateStatus);
 
-admin_route.get("/loadOrderDetails",adminController.viewOrderDetails)
+admin_route.get("/loadOrderDetails",adminController.viewOrderDetails);
+
+admin_route.get("/loadCoupon",couponController.loadCoupon);
+
+admin_route.get("/addCoupon",couponController.addCoupon);
+
+admin_route.post("/addCoupon",couponController.addNewCoupon);
+
+admin_route.get("/avail-coupon",couponController.availCoupon);
+
+admin_route.get("/edit-coupon",couponController.editCoupon);
+
+admin_route.post("/edit-coupon",couponController.editUpdateCoupon);
+
+admin_route.get("/delete-coupon",couponController.deleteCoupon);
+
+admin_route.get("/banner",bannerController.loadBanner);
+
+admin_route.get("/add-Banners",bannerController.loadAddBanner);
+
+admin_route.post("/add-Banners",multer.uploads.array('bImage',3),bannerController.addBanner);
+
+admin_route.get("/hideBanner",bannerController.hideBanner)
+
+admin_route.get("/editBanner",bannerController.editBanner);
+
+admin_route.post("/editBanner",multer.uploads.array('bImage',3),bannerController.editModifyBanner);
+
+
 
 
 admin_route.get('/logout', adminController.logout);

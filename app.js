@@ -4,6 +4,7 @@ const userRoute=require('./routes/userRoute');
 const mongo = require('./config/config');
 const path = require('path')
 const adminRoute=require('./routes/adminRoute');
+const userForgetPassword=require('./routes/forgotPassword');
 const app=express();
 
 require('dotenv').config();
@@ -19,6 +20,7 @@ app.use(nocache());
 
 app.use("/",userRoute);
 app.use("/admin",adminRoute);
+app.use("/forgot",userForgetPassword);
 app.all('*', (req, res) => {
   res.render('error');
 });

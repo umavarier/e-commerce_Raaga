@@ -8,7 +8,7 @@ forgot_Password.use(express.static('public'));
 
 forgot_Password.get("/forgot-P",forgotP.loadForgotPassword);
 
-forgot_Password.post("/forgot-P",forgotP.loadVeriftyForgotPassword);
+forgot_Password.post("/forgot-P",forgotP.loadVerifyForgotPassword);
 
 forgot_Password.post("/fnewPassword",forgotP.verifyOtp);
 

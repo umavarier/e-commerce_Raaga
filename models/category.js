@@ -13,7 +13,17 @@ const catSchema = mongoose.Schema({
         type: Number,
         default: 1,
         required: true
-    }
+    },
+    discountPercentage: {
+        type: Number,
+        default: 0,
+    },
+    startDate: {
+        type: Date,
+    },
+      endDate: {
+        type: Date,
+    },
 
 });
 

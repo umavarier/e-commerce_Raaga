@@ -4,16 +4,20 @@
 
     <h4 style="color: white;" class="text-center my-5">CATEGORIES</h4>
     <br>
-    <div  style="margin-left: 60px;">
-      <a  href="/admin/addCategories"><button type="button" class="btn btn-primary mx-3 justify-content-end">Add Categories</button></a>
-
+    <div style="display: flex; justify-content: space-between; margin-left: 60px; margin-right: 60px;">
+      <a href="/admin/addCategories"><button type="button" class="btn btn-primary">Add Categories</button></a>
+      <a href="/admin/addCategoryOffer"><button type="button" class="btn btn-primary">Add Category Offer</button></a>
     </div>
+    
     <br>
     <table class="table text-center">
       <thead>
         <tr>
           <th  style="color: white;" scope="col">SL NO</th>
-          <th  style="color: white;" scope="col">CATEGORY NAME</th>
+          <th  style="color: white;" scope="col">CATEGORY NAME</th>         
+          <th  style="color: white;" scope="col">OFFER PERCENTAGE</th>
+          <th  style="color: white;" scope="col">START DATE</th>
+          <th  style="color: white;" scope="col">END DATE</th>
           <th  style="color: white;" scope="col">ACTIONS</th>
         </tr>
       </thead>
@@ -25,6 +29,9 @@
               <%=i%>
             </td>
             <td  style="color: white;"><%=category[i-1].name%></td>
+            <td style="color: white;" ><%=category[i-1].discountPercentage %></td>
+            <td style="color: white;"><%=category[i-1].startDate ? category[i-1].startDate.toLocaleDateString("en-GB") : "" %></td>
+            <td style="color: white;"><%=category[i-1].endDate ? category[i-1].endDate.toLocaleDateString("en-GB") : "" %></td>
             <td>
               <a   href="/admin/editCategory?id=<%- category[i-1]._id %>"><button style="color: white; background-color: rgb(101, 118, 32); width: 50px;" type="button"
                   class="btn">edit</button></a>

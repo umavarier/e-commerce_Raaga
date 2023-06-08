@@ -1,12 +1,8 @@
 <%- include('../layouts/header.ejs') %>
 
-
-
     <!-- Navbar Start -->
-
+<body style="background-color: #0b0c2a;">
     <style>
-
-
         /* Style for the label */
         .label {
             text-align: center;
@@ -28,8 +24,6 @@
             color: #2196F3;
         }
 
-
-
         /* Style for the radio button circle */
         input[type="radio"]+label::before {
             content: "";
@@ -43,14 +37,11 @@
             cursor: pointer;
         }
 
-
         /* Style for the radio button circle when checked */
         input[type="radio"]:checked+label::before {
             background-color: #2196F3;
             border-color: #2196F3;
         }
-
-
 
         /* Accessibility styles for the radio button circle */
         input[type="radio"]+label::before {
@@ -64,7 +55,6 @@
             vertical-align: middle;
             cursor: pointer;
         }
-
 
         input[type="radio"]+label::before {
             content: "";
@@ -86,28 +76,20 @@
         }
     </style>
 
-    
     <!-- Breadcrumb Start -->
     <br>
     <div class="container-fluid">
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb mb-30">
-                    <a class="breadcrumb-item text-light text-decoration-none" href="/home">Home</a>
+                    <a class="breadcrumb-item text text-decoration-none" style="color: #000000;" href="/home">Home</a>
                     <a class="breadcrumb-item active text-decoration-none" href="/loadShop">Shop</a>
                 </nav>
             </div>
         </div>
     </div>
 
-    <!-- Breadcrumb End -->
-    <!-- <form action="">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search" name="search" id="search"
-                onkeyup="update()">
-            
-        </div>
-    </form> -->
+    <!-- Breadcrumb End -->     
 
     <!-- Shop Start -->
     <div class="container-fluid">
@@ -116,8 +98,8 @@
             <div class="col-lg-3 col-md-4">
                 <!-- Price Start -->
                 <!-- <h5 class="section-title position-relative text-uppercase mb-3"><span style="color: white;" class="pr-3">Filter by Category</span></h5> -->
-                <div style="background-color: rgb(33, 33, 33); border-radius: 20px;" class=" p-4 mb-30">
-                    <form style="color: white;" action="/loadShop">
+                <div style="background-color: rgb(255, 255, 255); border-radius: 20px;" class=" p-4 mb-30">
+                    <form style="color: rgb(11, 10, 10);" action="/loadShop">
 
 
                         <% for(i=0;i<category.length;i++){%>
@@ -147,13 +129,13 @@
 
 
             <!-- Shop Product Start -->
-            <div class="col-lg-9 col-md-8">
+            <div class="col-lg-8 col-md-6">
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             
                             <div class="ml-2">
-                                <select style="background-color: rgb(25, 25, 25); border-color:rgb(52, 52, 52); color: rgb(125, 125, 125); border-radius: 5px;" class="select-box select-box--transparent-b-2"
+                                <select style="background-color: rgb(248, 245, 245); border-color:rgb(52, 52, 52); color: rgb(5, 5, 5); border-radius: 5px;" class="select-box select-box--transparent-b-2"
                                     name="limit" id="limit" onchange="update()">
                                     <option value="12" <% if(limit==12) { %>selected<%}%> >Show: All</option>
                                     <option value="3" <% if(limit==3) { %>selected<%}%> >Show: 3</option>
@@ -163,7 +145,7 @@
                             </div>
 
                             <div class="ml-2">
-                                <select style="background-color: rgb(25,25,25); border-color:rgb(52, 52, 52) ;color: rgb(125, 125, 125); border-radius: 5px;" class="select-box select-box--transparent-b-2" name="sort" id="sort"
+                                <select style="background-color: rgb(246, 245, 245); border-color:rgb(52, 52, 52) ;color: rgb(0, 0, 0); border-radius: 5px;" class="select-box select-box--transparent-b-2" name="sort" id="sort"
                                     onchange="update()">
                                     <option value="0" <% if(order==0) { %>selected<%}%> >Sort By: Latest Arrivals</option>
                                     <option value="1" <% if(order==1) { %>selected<%}%> >Sort By: Lowest Price</option>
@@ -177,68 +159,86 @@
 
 
 
-
                 <div class="row pb-3" id="products">
                     <% for(i=0;i<product.length;i++){ %>
                         <% if(product[i].isAvailable){ %>
-                            <div  class="col-12 col-md-4 mb-4">
+                            <div  class="col-8 col-md-4 mb-4">
                             <div style="background-color: rgb(35, 35, 35); border-color: rgb(94, 94, 94);border-radius: 20px;" class="card h-100">
                                 <a  href="/viewDetails?id=<%=product[i]._id%>">
                                     <img style="border-width: 1px; border-color: rgb(226, 99, 99); border-radius: 20px;"  src="/uploads/<%=product[i].image[0]%>" class="card-img-top" alt="...">
                                 </a>
-                                
-                             <div class="card-body">
-                            <ul class="list-unstyled d-flex justify-content-between">
+                               
+                             <div class="card-body" >
+                                <a href="/viewDetails?id=<%=product[i]._id%>" style="color: #ffffff;" class="h4 text-uppercase text-decoration-none"><%=product[i].name%></a>
+                            <ul class="list-unstyled justify-content-between">
                                 
                                 <li>
                                    <%if (product[i].rating < 1){%>
-                                        <i class="text-warning fad fa fa-star-half"></i>
+                                        <i class="text-warning fad fas fa-star-half" style="font-size: 12px;"></i>
                                     <%}else if(product[i].rating <=1.5){%>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star-half"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star-half" style="font-size: 12px;"></i>
                                     <%}else if(product[i].rating < 2.5){%>
-                                        <i class="text-muted fa fa-star"></i>
-                                        <i class="text-muted fa fa-star"></i>
+                                        <i class="text-muted fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-muted fas fa-star" style="font-size: 12px;"></i>
                                     <%}else if(product[i].rating < 3.5){%>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
 
                                     <%}else if(product[i].rating < 4){%>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star-half"></i> 
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star-half" style="font-size: 12px;"></i> 
                                     
                                     <%}else if(product[i].rating < 4.5){%>
 
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
                                     <%}else if(product[i].rating < 5){%>
 
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star-half"></i>
-                                        
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star-half" style="font-size: 12px;"></i>                                        
                                     
                                     <%}else if(product[i].rating == 5){%>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
+                                        <i class="text-warning fas fa-star" style="font-size: 12px;"></i>
                                         
                                     <%}%>
                                    
                                 </li>
-                                <li style="color: #ffffff;" class="text-right">Rs <%=product[i].price%></li>
+                               
+                                <li>
+                                    
+                                    <% const categoryItem = category.find(cat => cat.name === product[i].category); %>
+                                    <%if(categoryItem.discountPercentage!=0){%>
+                                        
+                                        <% let value = product[i].price - product[i].price*categoryItem.discountPercentage/100 %>
+                                        <i class="text-light">Rs.<%=value%></i><br>
+                                        <del class="text-light">Rs.<%= product[i].price %></del>                                        
+                                        <i class="text-light">(<%=categoryItem.discountPercentage%>%off)</i>
+                                    <%}else{%>
+                                       <i class="text-light"> Rs.<%= product[i].price %></i>
+                                    <%}%>
+                                </li>
+                                
+                                   
+
+                                <% } %>
+                                
+                                <!-- <li style="color: #ffffff;" class="text-right">Rs <%=product[i].price%></li> -->
                             </ul>
                             
-                            <a href="/viewDetails?id=<%=product[i]._id%>" style="color: #ffffff;" class="h2 text-uppercase text-decoration-none"><%=product[i].name%></a>
+                            <!-- <a href="/viewDetails?id=<%=product[i]._id%>" style="color: #ffffff;" class="h4 text-uppercase text-decoration-none"><%=product[i].name%></a> -->
                             
                                                        
                             </div>
@@ -246,16 +246,10 @@
                         </div>
                  <%}%>
 
-                <%}%>
+                
 
                 
             </div>
-
-
-
-
-
-                
 
                 <div class="row pb-3 ">
                     <div class="col-12 " id="pgnt" style="display: block;">

@@ -4,45 +4,40 @@ const Category = require("../models/category");
 const sms=require('../middleware/smsValidation');
 const products = require("../models/productModel");
 const address = require("../models/addressModel");
-const order = require("../models/orderModel")
+const order = require("../models/orderModel");
+const coupon = require("../models/couponModel");
+const banner = require("../models/bannerModel");
+const RazorPay=require('razorpay');
 
 
 const loadHome = async (req, res,next) => {
     try {
         const product = await products.find({ isAvailable: 1 });
-        res.render('home', { user: req.session.user })
-        
+        const banners = await banner.findOne({ is_active: 1 });
+        res.render('home', { user: req.session.user, product: product, banner: banners })      
     }
     catch (error) {
-       next(error);
-       
+       next(error);       
     }
 }
 const loginLoad = async (req, res,next) => {
     try {
-
         res.render('login', { user: req.session.user })
-
     }
     catch (error) {
         next(error);
-
     }
 }
-
 
 const loadRegister = async (req, res,next) => {
     try {
-
         res.render('register', { user: req.session.user })
-
     }
     catch (error) {
         next(error);
 
     }
 }
-
 
 let user;
 const loadOtp = async (req, res,next) => {
@@ -59,18 +54,15 @@ const loadOtp = async (req, res,next) => {
             password: spassword,
             is_admin: 0,
         });
-        newOtp = 1234;
+        newOtp = 2311;
         // newOtp = sms.sendMessage(req.body.mno);
         console.log(newOtp);
         res.render("otpPage", { otp: newOtp, mobno: req.body.mno })
     }
 }
 
-
 const verifyOtp = async (req, res,next) => {
-
     try {
-
         if (req.body.sendotp == req.body.otp) {
             const userData = await user.save();
             if (userData) {
@@ -80,14 +72,11 @@ const verifyOtp = async (req, res,next) => {
                 res.render('register', { user: req.session.user, message: "registration failed!!" })
             }
         } else {
-
             console.log("otp not match");
             res.render('register', { user: req.session.user, message: "incorrect otp" })
         }
-
     } catch (error) {
         next(error);
-
     }
 }
 
@@ -95,26 +84,20 @@ const verifyLogin = async (req, res,next) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
-
-        const userData = await User.findOne({ email: email, is_admin: 0 });
-       
+        const userData = await User.findOne({ email: email, is_admin: 0 });       
         if (userData) {
             const passwordMatch = await bcrypt.compare(password, userData.password)
-
             if (passwordMatch) {
                 if (userData.is_verified) {
                     const product = await products.find();
                     req.session.user_id = userData._id;
                     req.session.user = userData.name;
-                    req.session.user1 = true;
-                    
+                    req.session.user1 = true;                    
                     res.redirect("home",302,{ user: userData.name, product: product});
                 } else {
                     res.render('login', { message: 'USER BLOCKED BY ADMIN', user: req.session.user })
-
                 }
             }
-
             else {
                 res.render('login', { message: 'email and password are incorrect', user: req.session.user })
             }
@@ -122,32 +105,27 @@ const verifyLogin = async (req, res,next) => {
         else {
             res.render('login', { message: 'email and password are incorrect', user: req.session.user })
         }
-
-
-
     }
     catch (error) {
         next(error);
-
     }
 }
 
 const loadUserProfile = async (req, res,next) => {
     try {
         const usid = req.session.user_id;
-        const user1 = await User.findOne({ _id: usid });
-      
+        const user1 = await User.findOne({ _id: usid });      
         const adid = await address.find({ userId: usid });
         const addressData = await address.find({ userId: usid });
         const details = await User.findOne({ _id: usid });
-        const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate("products.item.productId");
+        // const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate("products.item.productId");
+        const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate({path: "products.item",populate: {path: "productId", select: "name" } });
         console.log(details);
         console.log("user1"+user1)
         
         res.render("profile", { user: req.session.user, userAddress: adid, userData: user1, address: addressData , order: orderData, details: details})
     } catch (error) {
         next(error);
-
     }
 }
 
@@ -156,12 +134,9 @@ const editUser = async (req, res,next) => {
         const currentUser = req.session.user_id;
         const findUser = await User.findOne({ _id: currentUser });
         res.render("editUser", { user: findUser });
-
     } catch (error) {
         next(error);
-
-    }
-}
+    }}
 
 const editUserUpdate = async (req, res,next) => {
     try {
@@ -170,7 +145,6 @@ const editUserUpdate = async (req, res,next) => {
                 name: req.body.name,
                 email: req.body.email,
                 mobile: req.body.number
-
             }
         })
         res.redirect("/userProfile")
@@ -200,7 +174,6 @@ const addNewAddress = async (req, res,next) => {
         }
     } catch (error) {
         next(error);
-
     }
 }
 
@@ -213,7 +186,6 @@ const deleteAddress = async (req, res,next) => {
         }
     } catch (error) {
         next(error);
-
     }
 }
 const deleteAddressCart = async (req, res,next) => {
@@ -225,7 +197,6 @@ const deleteAddressCart = async (req, res,next) => {
         }
     } catch (error) {
         next(error);
-
     }
 }
 
@@ -236,13 +207,11 @@ const editAddress = async (req, res,next) => {
         res.render("editaddress", { user: req.session.user, address: addres });
     } catch (error) {
         next(error);
-
     }
 }
 const editUpdateAddress = async (req, res,next) => {
     try {
-        const id = req.body.id;
-        
+        const id = req.body.id;        
         const upadteAddres = await address.updateOne({ _id: id }, {
             $set: {
                 firstname: req.body.firstname,
@@ -257,7 +226,6 @@ const editUpdateAddress = async (req, res,next) => {
         res.redirect("/userProfile")
     } catch (error) {
         next(error);
-
     }
 }
 const loadShop = async (req, res,next) => {
@@ -284,51 +252,45 @@ const loadShop = async (req, res,next) => {
     
             }
         } else {
-            
             category = []
             arr = categoryData.map((x) => {
                 if(x.is_available===1){
                     return x.name
                 }
-            })
-            
+            })            
         }
+
         
         if (sort == 0) {
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] },{isAvailable:1}] }).sort({ $natural: -1 })
             pageCount = Math.floor(productData.length / limit)
             if (productData.length % limit > 0) {
-                
                 pageCount += 1
-            }
-            
+            }            
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] },{isAvailable:1}] }).sort({ $natural: -1 }).skip(skip).limit(limit)
         } else {
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }] }).sort({ price: sort })
             pageCount = Math.floor(productData.length / limit)
             if (productData.length % limit > 0) {
                 pageCount += 1
-            }
-            
+            }            
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }] }).sort({ price: sort }).skip(skip).limit(limit)
-        }
-        
+        }        
         if (req.session.user) { session = req.session.user } else session = false
         if (pageCount == 0) { pageCount = 1 }
         if (ajax) {
             res.json({ products: productData, pageCount, page })
         } else {
+            console.log(categoryData);
             res.render('shop', { user: session, product: productData, category: categoryData, val: search, selected: category, order: sort, limit: limit, pageCount, page })
         }
     } 
     catch (error) {
         next(error);
-
     }
 }
 
 const loadDetails = async (req, res,next) => {
-
     try {
         const id = req.query.id;
         const details = await products.findOne({ _id: id })
@@ -336,26 +298,27 @@ const loadDetails = async (req, res,next) => {
         res.render("details", { user: req.session.user, detail: details, related: product, message: "" });
     } catch (error) {
         next(error);
-
     }
 };
+
 const loadCheckout = async (req, res) => {
-    try {
-       
+    try {  
+        const couponData = await coupon.find();     
         const userData = req.session.user_id;
         const addresss = await address.find({ userId: userData });
         const userDetails = await User.findById({ _id: userSession })
         const completeUser = await userDetails.populate('cart.item.productId')
-        res.render("checkout", { user: req.session.user, address: addresss, checkoutdetails: completeUser.cart });
+        res.render("checkout", { user: req.session.user, address: addresss, checkoutdetails: completeUser.cart, coupon: couponData, discount: req.query.coupon  });
     } catch (error) {
         console.log(error.message);
     }
 }
+
+
 let Norder;
 const placeOrder = async (req, res,next) => {
     
-    try {
-        
+    try {        
         let nAddress;
         if (req.body.address == 0) {
             userSession = req.session
@@ -370,13 +333,11 @@ const placeOrder = async (req, res,next) => {
                 mobile: req.body.mno,
                 userId: userSession.user_id
             })
-            const newAddress = await nAddress.save();
-            
+            const newAddress = await nAddress.save();            
         }
         else {
             nAddress = await address.findOne({ _id: req.body.address });
         }
-
 
         const userData = await User.findOne({ _id: req.session.user_id })
         
@@ -406,7 +367,45 @@ const placeOrder = async (req, res,next) => {
             await User.updateOne({ _id: req.session.user_id }, { $unset: { cart: 1 } })
             res.render("orderSuccess", { user: req.session.user})
         }
-     
+        else if(req.body.payment == "Online"){
+            console.log("online pay");
+            var instance = new RazorPay({
+                key_id: process.env.KEY_ID,
+                key_secret: process.env.KEY_SECRET
+            })
+            let razorpayOrder = await instance.orders.create({
+                amount: req.body.amount*100,
+                currency: 'INR',
+                receipt: Norder._id.toString()
+            })
+            //   console.log('order Order created', razorpayOrder);
+            paymentDetails = razorpayOrder;
+            //   console.log(Norder+"asfasfasdfdsf");
+
+            const productData = await products.find()
+            for (let key of userData.cart.item) {
+                for (let key of userData.cart.item) {
+                   for (let prod of productData) {
+                    if (new String(prod._id).trim() == new String(key.productId._id).trim()) {
+                        prod.stock = prod.stock - key.qty
+                        await prod.save()
+                    }
+                }
+            }
+            }
+            
+            res.render("confirmPayment", {
+                userId: req.session.user_id,
+                order_id: razorpayOrder.id,
+                total: req.body.amount,
+                session: req.session,
+                key_id: process.env.key_id,
+                user: userData,
+                orders: Norder,
+                orderId: Norder._id.toString(),
+
+            });
+        }
 
     } catch (error) {
         next(error);
@@ -424,8 +423,7 @@ const cancelOrder = async (req, res,next) => {
             const orderData = await order.findById({ _id: id });
 
             for (let key of orderData.products.item) {
-                for (let prod of productData) {
-                    
+                for (let prod of productData) {                    
                     if (new String(prod._id).trim() == new String(key.productId).trim()) {
                         prod.stock = prod.stock + key.qty
                         await prod.save()
@@ -440,9 +438,24 @@ const cancelOrder = async (req, res,next) => {
     }
 }
 
-const viewOrderDetails = async (req, res,next) => {
+const loadOrderSuccess = async (req, res,next) => {
     try {
-        
+        Norder.payment.method = "Online"
+        Norder.paymentDetails.reciept = paymentDetails.receipt;
+        Norder.paymentDetails.status = paymentDetails.status;
+        Norder.paymentDetails.createdAt = paymentDetails.created_at;
+        console.log("confirmation");
+        await Norder.save();
+        await User.updateOne({ _id: req.session.user_id }, { $unset: { cart: 1 } })
+        res.render("orderSuccess", { user: req.session.user })
+
+    } catch (error) {
+        next(error);
+    }
+} 
+
+const viewOrderDetails = async (req, res,next) => {
+    try {        
         const id = req.query.id;
         const users = req.session.user_id
         const orderDetails = await order.findById({ _id: id });
@@ -454,6 +467,55 @@ const viewOrderDetails = async (req, res,next) => {
 
     }
 }
+const applyCoupon = async (req, res) => {
+    try {
+        console.log("test")
+        const totalPrice = req.body.totalValue;
+        console.log("total" + totalPrice);
+        console.log(req.body.coupon);
+        userdata = await User.findById({ _id: req.session.user_id });
+        offerdata = await coupon.findOne({ name: req.body.coupon });       
+        if (offerdata) {            
+            console.log(offerdata.expiryDate, Date.now());
+            const date1 = new Date(offerdata.expiryDate);
+            const date2 = new Date(Date.now());
+            if (date1.getTime() > date2.getTime()) {
+              
+                if (offerdata.usedBy.includes(req.session.user_id)) {
+                    messag = 'coupon already used'
+                    console.log(messag);
+                } else {
+                    // console.log('why?');
+                    console.log(userdata.cart.totalPrice, offerdata.maximumvalue, offerdata.minimumvalue);
+                    if (userdata.cart.totalPrice >= offerdata.minimumvalue) {                        
+                        console.log('offerdata.name');
+                        await coupon.updateOne({ name: offerdata.name }, { $push: { usedBy: userdata._id } });                        
+                        disc = (offerdata.discount * totalPrice) / 100;
+                        if (disc > offerdata.maximumvalue) { disc = offerdata.maximumvalue }
+                        console.log(disc);
+                        
+                        res.send({ offerdata, disc, state: 1 })
+                    } else {
+                        messag = 'cannot apply'
+                        res.send({ messag, state: 0 })
+                    }
+                }
+            } else {
+                messag = 'coupon Expired'
+                res.send({ messag, state: 0 })
+            }
+        } else {
+            messag = 'coupon not found'
+            res.send({ messag, state: 0 })
+        }
+        res.send({ messag, state: 0 })
+    }
+
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
 const editCheckoutAddress = async (req, res,next) => {
     try {
         const id = req.query.id;
@@ -461,10 +523,8 @@ const editCheckoutAddress = async (req, res,next) => {
         res.render("editCheckoutAddress", { user: req.session.user, address: addressData });
     } catch (error) {
         next(error);
-
     }
 }
-
 
 const editUpdateCheckoutAddress = async (req, res,next) => {
     try {
@@ -487,7 +547,6 @@ const editUpdateCheckoutAddress = async (req, res,next) => {
 
     }
 }
-
 
 const userLogout = async (req, res,next) => {
     try {
@@ -526,6 +585,8 @@ module.exports = {
     placeOrder,
     viewOrderDetails,
     cancelOrder,
+    applyCoupon,
     editUpdateCheckoutAddress,
     editCheckoutAddress,
+    loadOrderSuccess,
 }

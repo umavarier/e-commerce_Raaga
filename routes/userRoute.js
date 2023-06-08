@@ -4,6 +4,7 @@ const session = require("express-session");
 const auth = require("../middleware/auth");
 const userController = require("../controllers/userController");
 const cartController = require("../controllers/cartController");
+const wishlistController = require("../controllers/wishlistController");
 
 require('dotenv').config();
 
@@ -58,6 +59,14 @@ user_route.get("/loadShop",userController.loadShop);
 
 user_route.get("/viewDetails",userController.loadDetails);
 
+user_route.get("/wishlist",wishlistController.loadWishlist)
+
+user_route.get("/addWishlist",wishlistController.addWishlist);
+
+user_route.get("/deleteWishlist", wishlistController.removeWishlist);
+
+user_route.get("/addCartremoveWishlist",wishlistController.addToCartRemovefromWishlist);
+
 user_route.get("/loadCart",cartController.loadCart);
 
 user_route.get("/addToCart",cartController.addToCart);
@@ -67,6 +76,10 @@ user_route.post("/updateCart",cartController.updateCart);
 user_route.get('/deleteCart',cartController.deleteCart);
 
 user_route.get("/loadCheckout",userController.loadCheckout);
+
+user_route.post("/applyCoupon",userController.applyCoupon);
+
+user_route.get("/onlinePayment",userController.loadOrderSuccess);
 
 user_route.post("/orderSuccess",userController.placeOrder);
 

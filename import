@@ -1,0 +1,15 @@
+<% const categoryItem = category.find(cat => cat.name === product[i].category); %>
+<% if (categoryItem && categoryItem.discountPercentage > 0) { %>
+    
+<% } else { %>
+    <!-- Original Price -->
+    
+<% } %>
+
+
+<!-- Original Price with Offer -->
+<del>Rs <%= product[i].price %></del>
+<br>
+<!-- Offer Amount -->
+<i> <%= categoryItem.discountPercentage%> </i>
+<i>  Rs <%= (product[i].offerAmount).toFixed(2) %> </i>
