@@ -89,6 +89,8 @@ user_route.post("/editcheckoutAddress",userController.editUpdateCheckoutAddress)
 
 user_route.get("/cancelOrder",userController.cancelOrder);
 
+user_route.get("/returnOrder",userController.retunOrder);
+
 user_route.get("/vieworder",auth.isLogin,userController.viewOrderDetails);
 
 user_route.get("/logout",userController.userLogout);

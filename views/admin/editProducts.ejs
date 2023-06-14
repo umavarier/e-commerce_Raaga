@@ -26,18 +26,23 @@
 
           <label class="col-md-4 text-light control-label" for="product_name">Category</label>
           <br>
-          <select class="form-select border-white" id="exampleFormControlSelect1" aria-label="Default select example"
-            aria-placeholder="" name="pCategory">
+          <select class="form-select border-white" id="exampleFormControlSelect1" aria-label="Default select example" aria-placeholder="<%=products.category%>" name="pCategory">
             <option disabled selected>select any category</option>
-            <% if(category){ %>
-              <% for(let i=1;i <=category.length; i++){ %>
-                <option value="<%= category[i-1].name %>">
-                  <%= category[i-1].name %>
-                </option>
+            <% if(category) { %>
+              <% for(let i = 1; i <= category.length; i++) { %>
+                <% if(category[i - 1].name === products.category) { %>
+                  <option value="<%= category[i - 1].name %>" selected>
+                    <%= category[i - 1].name %>
+                  </option>
+                <% } else { %>
+                  <option value="<%= category[i - 1].name %>">
+                    <%= category[i - 1].name %>
+                  </option>
                 <% } %>
-                  <% }else{ %>
-                    <h1>No Categories to add</h1>
-                    <% } %>
+              <% } %>
+            <% } else { %>
+              <h1>No Categories to add</h1>
+            <% } %>
           </select>
 
 

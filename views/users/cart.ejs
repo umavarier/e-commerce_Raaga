@@ -34,7 +34,6 @@
                 -webkit-box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, .05);
                 box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, .05);
             }
-
             .card .card-header {
                 background-color: #000000;
                 border-bottom: none;
@@ -43,12 +42,9 @@
                 border-top-left-radius: 8px;
                 border-top-right-radius: 8px;
             }
-
             .card-header:first-child {
                 border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
             }
-
-
             .card .card-body {
                 padding: 30px;
                 background-color: transparent;
@@ -57,7 +53,6 @@
             .letter {
                 color: aliceblue;
             }
-
             .btnn {
                 text-align: center;
                 background-color: #cbb739 !important;
@@ -67,19 +62,16 @@
                 color: rgb(0, 0, 0);
             }
         </style>
-        <div class="container-fluid">         
-            
+        <div class="container-fluid">             
 
                                  <div class="d-flex flex-column justify-content-center align-items-center mt-1 mb-5 ">
                                         
                                     <h5 style="color:white;">Your Cart Misses You!! </h6>  
-                                    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_4yZa2Y0rpb.json"  background="transparent"  speed="2"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-                                
+                                    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_4yZa2Y0rpb.json"  background="transparent"  speed="2"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>                               
                                     
                                 </div>
                             </div>
         <%}else{%>
-
            
             <!-- Cart Start -->
             <div class="container-fluid">
@@ -96,9 +88,8 @@
                                     <th>Remove</th>
                                 </tr>
                             </thead>
-                            <tbody class="align-middle">
+                                 <tbody class="align-middle">
                                 <% for(let i=0;i<cartProducts.item.length;i++){ %>
-
                                     <tr class="text-light">
                                         <td class="align-middle"><a
                                                 href="/viewDetails?id=<%=cartProducts.item[i].productId._id%>"><img
@@ -109,12 +100,19 @@
                                             <%=cartProducts.item[i].productId.name%>
                                             </a>
                                         </td>
+                                        <% const categoryItem = categoryData.find(cat => cat.name === cartProducts.item[i].productId.category); %>
+                                                <%if(categoryItem.discountPercentage!=0){%>
+                                        
+                                                <% let discountedPrice = cartProducts.item[i].productId.price - (cartProducts.item[i].productId.price * categoryItem.discountPercentage / 100); %>
+                                                <td id="price" class="align-middle">
+                                                    <%=discountedPrice%>
+                                                </td>
+                                                <% } else { %>
                                         <td id="price" class="align-middle">
                                             <%=cartProducts.item[i].productId.price%>
                                         </td>
+                                        <%}%>
                                         <td class="align-middle ">
-
-
                                             <div class="d-flex  ms-4" style="max-width: 160px; ">
                                                 <button class=" button hollow circle btn-info" style="border-radius: 5px; height: 34px; margin-left: 60px;"
                                                     onclick="update('<%= cartProducts.item[i].productId._id %>',0,'<%=i%>')">
@@ -126,18 +124,22 @@
                                                         value="<%=cartProducts.item[i].qty%>" type="number" disabled
                                                         class="form-control"
                                                         id='<%=cartProducts.item[i].productId._id %>' />
-
                                                 </div>
                                                 <button class=" button hollow circle btn-info" style="border-radius: 5px; height: 34px;"
                                                     onclick="update('<%= cartProducts.item[i].productId._id %>','<%-cartProducts.item[i].productId.stock%>','<%=i%>')">
-
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                             </div>
-
                                         </td>
                                         <td id="<%=i%>" class="align-middle">
-                                            <%=cartProducts.item[i].productId.price*cartProducts.item[i].qty%>
+                                            <!-- <%=cartProducts.item[i].productId.price*cartProducts.item[i].qty%> -->
+                                            <% if(categoryItem.discountPercentage !== 0){ %>
+                                                <% let discountedPrice = cartProducts.item[i].productId.price - (cartProducts.item[i].productId.price * categoryItem.discountPercentage / 100); %>
+                                                <% let discountedTotalPrice = discountedPrice * cartProducts.item[i].qty; %>
+                                                <%=discountedTotalPrice%>
+                                            <% } else { %>
+                                                <%=cartProducts.item[i].productId.price * cartProducts.item[i].qty%>
+                                            <% } %>
                                         </td>
                                         <td class="align-middle"><a
                                                 href="/deleteCart?id=<%= cartProducts.item[i].productId._id %>"><button
@@ -150,17 +152,24 @@
                         </table>
                     </div>
                     <div class="col-lg-4">
-
                         <h5 class="section-title position-relative text-uppercase mb-3"><span
                               style="color: rgb(246, 239, 239) ;"  class="pr-3">Cart Summary</span></h5>
+                              <% let total = 0; %>
+                              <% let discountedTotalPrice = 0; %>
+                              <% for (let i = 0; i < cartProducts.item.length; i++) { %>
+                                <% const categoryItem = categoryData.find(cat => cat.name === cartProducts.item[i].productId.category); %>
+                                <% let itemPrice = (categoryItem.discountPercentage !== 0) ? (cartProducts.item[i].productId.price - (cartProducts.item[i].productId.price * categoryItem.discountPercentage / 100)) : cartProducts.item[i].productId.price; %>
+                                <% let discountedTotalPrice = itemPrice * cartProducts.item[i].qty; %>
+                                <% total += discountedTotalPrice; %>
                         <div class=" p-30 mb-5">
                             <div class="pt-2">
                                 <div class="d-flex text justify-content-between mt-2" >
+                                    <%}%>
                                     <h5 style="color:aliceblue;">Total</h5>
-                                    <h5  style="color:aliceblue;" id="total">Rs <%=cartProducts.totalPrice%>
+                                    
+                                    <h5  style="color:aliceblue;" id="total">Rs <%= total %>
                                     </h5>
                                 </div>
-
                                 <a class="btn btn-block sm btn-primary font-weight-bold mt-4" href="<%if(cartProducts.totalPrice==0){%>/loadCart<%}else{%>/loadCheckout<%}%>">
                                        <small>Proceed To
                                         Checkout</small></a>
@@ -175,8 +184,7 @@
 
                 </div>
                 <% } %>
-                <!-- Cart End -->
-                
+                <!-- Cart End -->                
 
                 <!-- Back to Top -->
 </body>
@@ -229,9 +237,7 @@
             }
         });
     });
-
     function update(id, plus, amt) {
-
         currentqty = document.getElementById(id)
         console.log(plus, amt);
         if (plus) {
@@ -242,14 +248,13 @@
             currentqty.parentNode.querySelector('input[type=number]').stepDown()
         }
         setTimeout(() => {
-            console.log("currrent====" + currentqty.value);
-            console.log('qty==' + currentqty.value);
+            // console.log("currrent" + currentqty.value);
+            // console.log('qty' + currentqty.value);
             let qty = document.getElementById(id).value;
             console.log(currentqty.value, plus);
             if (currentqty.value == plus && currentqty.value == 0) {
                 console.log(currentqty.value, plus);
             } else {
-
                 $.ajax({
                     url: '/updateCart',
                     type: 'POST',

@@ -48,13 +48,17 @@ const userSchema = mongoose.Schema({
             },
             price: {
                 type: Number,
-                require:true
+                require: true
             },
         }],
         totalPrice: {
             type: Number,
             default: 0
         }
+    },
+    wallet: {
+        type: Number,
+        default: 0
     },
     is_verified: {
         type: Number,
@@ -93,7 +97,7 @@ userSchema.methods.removefromCart = async function (productId) {
 }
 
 userSchema.methods.addToCart = async function (product) {
-    
+
     const cart = this.cart
     const isExisting = cart.item.findIndex(objInItems => {
         return new String(objInItems.productId).trim() == new String(product._id).trim()
@@ -111,8 +115,6 @@ userSchema.methods.addToCart = async function (product) {
     console.log("User in schema:", this);
     return this.save()
 }
-
-
 
 userSchema.methods.updateCart = async function (id, qty) {
     const cart = this.cart;

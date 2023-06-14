@@ -1,26 +1,26 @@
 const User = require('../models/userModel')
 const bcrypt = require('bcrypt');
 const Category = require("../models/category");
-const sms=require('../middleware/smsValidation');
+const sms = require('../middleware/smsValidation');
 const products = require("../models/productModel");
 const address = require("../models/addressModel");
 const order = require("../models/orderModel");
 const coupon = require("../models/couponModel");
 const banner = require("../models/bannerModel");
-const RazorPay=require('razorpay');
+const RazorPay = require('razorpay');
 
 
-const loadHome = async (req, res,next) => {
+const loadHome = async (req, res, next) => {
     try {
         const product = await products.find({ isAvailable: 1 });
         const banners = await banner.findOne({ is_active: 1 });
-        res.render('home', { user: req.session.user, product: product, banner: banners })      
+        res.render('home', { user: req.session.user, product: product, banner: banners })
     }
     catch (error) {
-       next(error);       
+        next(error);
     }
 }
-const loginLoad = async (req, res,next) => {
+const loginLoad = async (req, res, next) => {
     try {
         res.render('login', { user: req.session.user })
     }
@@ -29,7 +29,7 @@ const loginLoad = async (req, res,next) => {
     }
 }
 
-const loadRegister = async (req, res,next) => {
+const loadRegister = async (req, res, next) => {
     try {
         res.render('register', { user: req.session.user })
     }
@@ -40,10 +40,10 @@ const loadRegister = async (req, res,next) => {
 }
 
 let user;
-const loadOtp = async (req, res,next) => {
+const loadOtp = async (req, res, next) => {
     const verify = await User.findOne({ $or: [{ mobile: req.body.mno }, { email: req.body.email }] });
     if (verify) {
-       
+
         res.render('register', { user: req.session.user, message: "user already exists!" })
     } else {
         const spassword = await bcrypt.hash(req.body.password, 10);
@@ -61,7 +61,7 @@ const loadOtp = async (req, res,next) => {
     }
 }
 
-const verifyOtp = async (req, res,next) => {
+const verifyOtp = async (req, res, next) => {
     try {
         if (req.body.sendotp == req.body.otp) {
             const userData = await user.save();
@@ -80,11 +80,11 @@ const verifyOtp = async (req, res,next) => {
     }
 }
 
-const verifyLogin = async (req, res,next) => {
+const verifyLogin = async (req, res, next) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
-        const userData = await User.findOne({ email: email, is_admin: 0 });       
+        const userData = await User.findOne({ email: email, is_admin: 0 });
         if (userData) {
             const passwordMatch = await bcrypt.compare(password, userData.password)
             if (passwordMatch) {
@@ -92,8 +92,8 @@ const verifyLogin = async (req, res,next) => {
                     const product = await products.find();
                     req.session.user_id = userData._id;
                     req.session.user = userData.name;
-                    req.session.user1 = true;                    
-                    res.redirect("home",302,{ user: userData.name, product: product});
+                    req.session.user1 = true;
+                    res.redirect("home", 302, { user: userData.name, product: product });
                 } else {
                     res.render('login', { message: 'USER BLOCKED BY ADMIN', user: req.session.user })
                 }
@@ -111,34 +111,35 @@ const verifyLogin = async (req, res,next) => {
     }
 }
 
-const loadUserProfile = async (req, res,next) => {
+const loadUserProfile = async (req, res, next) => {
     try {
         const usid = req.session.user_id;
-        const user1 = await User.findOne({ _id: usid });      
+        const user1 = await User.findOne({ _id: usid });
         const adid = await address.find({ userId: usid });
         const addressData = await address.find({ userId: usid });
         const details = await User.findOne({ _id: usid });
         // const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate("products.item.productId");
-        const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate({path: "products.item",populate: {path: "productId", select: "name" } });
+        const orderData = await order.find({ userId: usid }).sort({ createdAt: -1 }).populate({ path: "products.item", populate: { path: "productId", select: "name" } });
         console.log(details);
-        console.log("user1"+user1)
-        
-        res.render("profile", { user: req.session.user, userAddress: adid, userData: user1, address: addressData , order: orderData, details: details})
+        console.log("user1" + user1)
+
+        res.render("profile", { user: req.session.user, userAddress: adid, userData: user1, address: addressData, order: orderData, details: details })
     } catch (error) {
         next(error);
     }
 }
 
-const editUser = async (req, res,next) => {
+const editUser = async (req, res, next) => {
     try {
         const currentUser = req.session.user_id;
         const findUser = await User.findOne({ _id: currentUser });
         res.render("editUser", { user: findUser });
     } catch (error) {
         next(error);
-    }}
+    }
+}
 
-const editUserUpdate = async (req, res,next) => {
+const editUserUpdate = async (req, res, next) => {
     try {
         await User.findByIdAndUpdate({ _id: req.body.id }, {
             $set: {
@@ -154,7 +155,7 @@ const editUserUpdate = async (req, res,next) => {
     }
 }
 
-const addNewAddress = async (req, res,next) => {
+const addNewAddress = async (req, res, next) => {
     try {
         userSession = req.session
         const nAddress = await new address({
@@ -177,7 +178,7 @@ const addNewAddress = async (req, res,next) => {
     }
 }
 
-const deleteAddress = async (req, res,next) => {
+const deleteAddress = async (req, res, next) => {
     try {
         const id = req.query.id;
         const Address = await address.deleteOne({ _id: id });
@@ -188,7 +189,7 @@ const deleteAddress = async (req, res,next) => {
         next(error);
     }
 }
-const deleteAddressCart = async (req, res,next) => {
+const deleteAddressCart = async (req, res, next) => {
     try {
         const id = req.query.id;
         const Address = await address.deleteOne({ _id: id });
@@ -200,7 +201,7 @@ const deleteAddressCart = async (req, res,next) => {
     }
 }
 
-const editAddress = async (req, res,next) => {
+const editAddress = async (req, res, next) => {
     try {
         const id = req.query.id;
         const addres = await address.findOne({ _id: id })
@@ -209,9 +210,9 @@ const editAddress = async (req, res,next) => {
         next(error);
     }
 }
-const editUpdateAddress = async (req, res,next) => {
+const editUpdateAddress = async (req, res, next) => {
     try {
-        const id = req.body.id;        
+        const id = req.body.id;
         const upadteAddres = await address.updateOne({ _id: id }, {
             $set: {
                 firstname: req.body.firstname,
@@ -228,7 +229,7 @@ const editUpdateAddress = async (req, res,next) => {
         next(error);
     }
 }
-const loadShop = async (req, res,next) => {
+const loadShop = async (req, res, next) => {
     try {
         const categoryData = await Category.find()
         let { search, sort, category, limit, page, ajax } = req.query
@@ -243,39 +244,39 @@ const loadShop = async (req, res,next) => {
             page = 0
         }
         skip = page * limit
-        
+
         let arr = []
         if (category) {
             for (i = 0; i < category.length; i++) {
-               
-                    arr = [...arr, categoryData[category[i]].name]
-    
+
+                arr = [...arr, categoryData[category[i]].name]
+
             }
         } else {
             category = []
             arr = categoryData.map((x) => {
-                if(x.is_available===1){
+                if (x.is_available === 1) {
                     return x.name
                 }
-            })            
+            })
         }
 
-        
+
         if (sort == 0) {
-            productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] },{isAvailable:1}] }).sort({ $natural: -1 })
+            productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }, { isAvailable: 1 }] }).sort({ $natural: -1 })
             pageCount = Math.floor(productData.length / limit)
             if (productData.length % limit > 0) {
                 pageCount += 1
-            }            
-            productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] },{isAvailable:1}] }).sort({ $natural: -1 }).skip(skip).limit(limit)
+            }
+            productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }, { isAvailable: 1 }] }).sort({ $natural: -1 }).skip(skip).limit(limit)
         } else {
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }] }).sort({ price: sort })
             pageCount = Math.floor(productData.length / limit)
             if (productData.length % limit > 0) {
                 pageCount += 1
-            }            
+            }
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }] }).sort({ price: sort }).skip(skip).limit(limit)
-        }        
+        }
         if (req.session.user) { session = req.session.user } else session = false
         if (pageCount == 0) { pageCount = 1 }
         if (ajax) {
@@ -284,13 +285,13 @@ const loadShop = async (req, res,next) => {
             console.log(categoryData);
             res.render('shop', { user: session, product: productData, category: categoryData, val: search, selected: category, order: sort, limit: limit, pageCount, page })
         }
-    } 
+    }
     catch (error) {
         next(error);
     }
 }
 
-const loadDetails = async (req, res,next) => {
+const loadDetails = async (req, res, next) => {
     try {
         const id = req.query.id;
         const details = await products.findOne({ _id: id })
@@ -302,13 +303,14 @@ const loadDetails = async (req, res,next) => {
 };
 
 const loadCheckout = async (req, res) => {
-    try {  
-        const couponData = await coupon.find();     
+    try {
+        const couponData = await coupon.find();
         const userData = req.session.user_id;
+        const categoryData = await Category.find();
         const addresss = await address.find({ userId: userData });
         const userDetails = await User.findById({ _id: userSession })
         const completeUser = await userDetails.populate('cart.item.productId')
-        res.render("checkout", { user: req.session.user, address: addresss, checkoutdetails: completeUser.cart, coupon: couponData, discount: req.query.coupon  });
+        res.render("checkout", { user: req.session.user, address: addresss, checkoutdetails: completeUser.cart, coupon: couponData, discount: req.query.coupon, category: categoryData, wallet: userDetails.wallet });
     } catch (error) {
         console.log(error.message);
     }
@@ -316,13 +318,13 @@ const loadCheckout = async (req, res) => {
 
 
 let Norder;
-const placeOrder = async (req, res,next) => {
-    
-    try {        
+const placeOrder = async (req, res, next) => {
+
+    try {
         let nAddress;
         if (req.body.address == 0) {
             userSession = req.session
-                nAddress = await new address({
+            nAddress = await new address({
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 country: req.body.country,
@@ -333,14 +335,14 @@ const placeOrder = async (req, res,next) => {
                 mobile: req.body.mno,
                 userId: userSession.user_id
             })
-            const newAddress = await nAddress.save();            
+            const newAddress = await nAddress.save();
         }
         else {
             nAddress = await address.findOne({ _id: req.body.address });
         }
 
         const userData = await User.findOne({ _id: req.session.user_id })
-        
+
         Norder = new order({
             userId: req.session.user_id,
             address: nAddress,
@@ -349,6 +351,7 @@ const placeOrder = async (req, res,next) => {
                 amount: req.body.amount,
 
             },
+            offer: req.body.coupon,
             products: userData.cart,
         });
 
@@ -365,16 +368,66 @@ const placeOrder = async (req, res,next) => {
                 }
             }
             await User.updateOne({ _id: req.session.user_id }, { $unset: { cart: 1 } })
-            res.render("orderSuccess", { user: req.session.user})
+            res.render("orderSuccess", { user: req.session.user })
         }
-        else if(req.body.payment == "Online"){
-            console.log("online pay");
+        else if (req.body.payment == "wallet") {
+            console.log("123");
+            let walletAmount = parseInt(req.body.walamount);
+            let totalAmount = parseInt(req.body.cost)
+            req.session.totalWallet = walletAmount;
+            console.log(req.session.totalWallet);
+            if (walletAmount >= totalAmount) {
+                console.log("asdfdgadgadg");
+                await Norder.save();
+                let userWallet = await User.findOne({ _id: req.session.user_id })
+                let minusAmt = userWallet.wallet - req.body.cost;
+                let minuswalAmt = await User.updateOne({ _id: req.session.user_id }, { $set: { wallet: minusAmt } })
+                console.log(minuswalAmt);
+                await User.updateOne({ _id: req.session.user_id }, { $unset: { cart: 1 } })
+
+                const productData = await products.find()
+                for (let key of userData.cart.item) {
+                    for (let prod of productData) {
+
+                        if (new String(prod._id).trim() == new String(key.productId._id).trim()) {
+                            prod.stock = prod.stock - key.qty
+                            await prod.save()
+                        }
+                    }
+                }
+
+                res.render("orderSuccess", { user: req.session.user })
+            } else {
+                var instance = new RazorPay({
+                    key_id: process.env.key_id,
+                    key_secret: process.env.key_secret
+                })
+                let razorpayOrder = await instance.orders.create({
+                    amount: req.body.cost * 100,
+                    currency: 'INR',
+                    receipt: Norder._id.toString()
+                })
+
+                console.log('order Order created', razorpayOrder);
+                const productData = await products.find()
+                for (let key of userData.cart.item) {
+                    for (let prod of productData) {
+
+                        if (new String(prod._id).trim() == new String(key.productId._id).trim()) {
+                            prod.stock = prod.stock - key.qty
+                            await prod.save()
+                        }
+                    }
+                }
+            }
+        }
+        else {
             var instance = new RazorPay({
-                key_id: process.env.KEY_ID,
-                key_secret: process.env.KEY_SECRET
+                key_id: process.env.key_id,
+                key_secret: process.env.key_secret
             })
             let razorpayOrder = await instance.orders.create({
-                amount: req.body.amount*100,
+                amount: req.body.cost * 100,
                 currency: 'INR',
                 receipt: Norder._id.toString()
             })
@@ -384,16 +437,14 @@ const placeOrder = async (req, res,next) => {
 
             const productData = await products.find()
             for (let key of userData.cart.item) {
-                for (let key of userData.cart.item) {
-                   for (let prod of productData) {
+                for (let prod of productData) {
                     if (new String(prod._id).trim() == new String(key.productId._id).trim()) {
                         prod.stock = prod.stock - key.qty
                         await prod.save()
                     }
                 }
             }
-            }
-            
+            console.log("total" + req.body.amount);
             res.render("confirmPayment", {
                 userId: req.session.user_id,
                 order_id: razorpayOrder.id,
@@ -403,16 +454,13 @@ const placeOrder = async (req, res,next) => {
                 user: userData,
                 orders: Norder,
                 orderId: Norder._id.toString(),
-
             });
         }
-
     } catch (error) {
         next(error);
-
     }
 }
-const cancelOrder = async (req, res,next) => {
+const cancelOrder = async (req, res, next) => {
     try {
         const id = req.query.id;
         const orderDetails = await order.findById({ _id: id });
@@ -423,13 +471,18 @@ const cancelOrder = async (req, res,next) => {
             const orderData = await order.findById({ _id: id });
 
             for (let key of orderData.products.item) {
-                for (let prod of productData) {                    
+                for (let prod of productData) {
                     if (new String(prod._id).trim() == new String(key.productId).trim()) {
                         prod.stock = prod.stock + key.qty
                         await prod.save()
                     }
                 }
             }
+        }
+        if (state == "cancelled" && orderDetails.payment.method != "COD") {
+            userDetails = await User.findOne({ _id: orderDetails.userId });
+            const walletData = userDetails.wallet;
+            userData = await User.updateOne({ _id: orderDetails.userId }, { $set: { wallet: walletData + orderDetails.payment.amount } })
         }
         res.redirect("/userProfile")
     } catch (error) {
@@ -438,7 +491,7 @@ const cancelOrder = async (req, res,next) => {
     }
 }
 
-const loadOrderSuccess = async (req, res,next) => {
+const loadOrderSuccess = async (req, res, next) => {
     try {
         Norder.payment.method = "Online"
         Norder.paymentDetails.reciept = paymentDetails.receipt;
@@ -452,10 +505,10 @@ const loadOrderSuccess = async (req, res,next) => {
     } catch (error) {
         next(error);
     }
-} 
+}
 
-const viewOrderDetails = async (req, res,next) => {
-    try {        
+const viewOrderDetails = async (req, res, next) => {
+    try {
         const id = req.query.id;
         const users = req.session.user_id
         const orderDetails = await order.findById({ _id: id });
@@ -474,26 +527,25 @@ const applyCoupon = async (req, res) => {
         console.log("total" + totalPrice);
         console.log(req.body.coupon);
         userdata = await User.findById({ _id: req.session.user_id });
-        offerdata = await coupon.findOne({ name: req.body.coupon });       
-        if (offerdata) {            
+        offerdata = await coupon.findOne({ name: req.body.coupon });
+        if (offerdata) {
             console.log(offerdata.expiryDate, Date.now());
             const date1 = new Date(offerdata.expiryDate);
             const date2 = new Date(Date.now());
             if (date1.getTime() > date2.getTime()) {
-              
                 if (offerdata.usedBy.includes(req.session.user_id)) {
                     messag = 'coupon already used'
                     console.log(messag);
                 } else {
                     // console.log('why?');
                     console.log(userdata.cart.totalPrice, offerdata.maximumvalue, offerdata.minimumvalue);
-                    if (userdata.cart.totalPrice >= offerdata.minimumvalue) {                        
+                    if (userdata.cart.totalPrice >= offerdata.minimumvalue) {
                         console.log('offerdata.name');
-                        await coupon.updateOne({ name: offerdata.name }, { $push: { usedBy: userdata._id } });                        
+                        await coupon.updateOne({ name: offerdata.name }, { $push: { usedBy: userdata._id } });
                         disc = (offerdata.discount * totalPrice) / 100;
                         if (disc > offerdata.maximumvalue) { disc = offerdata.maximumvalue }
                         console.log(disc);
-                        
+
                         res.send({ offerdata, disc, state: 1 })
                     } else {
                         messag = 'cannot apply'
@@ -508,7 +560,7 @@ const applyCoupon = async (req, res) => {
             messag = 'coupon not found'
             res.send({ messag, state: 0 })
         }
-        res.send({ messag, state: 0 })
+        // res.send({ messag, state: 0 })
     }
 
     catch (error) {
@@ -516,7 +568,7 @@ const applyCoupon = async (req, res) => {
     }
 }
 
-const editCheckoutAddress = async (req, res,next) => {
+const editCheckoutAddress = async (req, res, next) => {
     try {
         const id = req.query.id;
         const addressData = await address.findById({ _id: id });
@@ -526,10 +578,10 @@ const editCheckoutAddress = async (req, res,next) => {
     }
 }
 
-const editUpdateCheckoutAddress = async (req, res,next) => {
+const editUpdateCheckoutAddress = async (req, res, next) => {
     try {
         const id = req.body.id;
-        
+
         const upadteAddres = await address.findByIdAndUpdate({ _id: id }, {
             $set: {
                 firstname: req.body.firstname,
@@ -546,9 +598,42 @@ const editUpdateCheckoutAddress = async (req, res,next) => {
         next(error);
 
     }
+};
+
+const retunOrder = async (req, res) => {
+    try {
+        const id = req.query.id;
+        const users = req.session.user_id
+        const orderDetails = await order.findById({ _id: id });
+        const addres = await address.findById({ _id: users })
+        const cancel = await order.findByIdAndUpdate({ _id: id }, { $set: { status: "returned" } })
+        await orderDetails.populate('products.item.productId')
+        let state = "returned";
+        if (state == "returned") {
+            const productData = await products.find()
+            const orderData = await order.findById({ _id: id });
+            for (let key of orderData.products.item) {
+                for (let prod of productData) {
+                    console.log(key.productId);
+                    if (new String(prod._id).trim() == new String(key.productId).trim()) {
+                        prod.stock = prod.stock + key.qty
+                        await prod.save()
+                    }
+                }
+            }
+        }
+        if (state == "returned" && orderDetails.payment.method != "COD") {
+            userDetails = await User.findOne({ _id: orderDetails.userId });
+            const walletData = userDetails.wallet;
+            userData = await User.updateOne({ _id: orderDetails.userId }, { $set: { wallet: walletData + orderDetails.payment.amount } })
+        }
+        res.redirect("/userProfile")
+    } catch (error) {
+        console.log(error.message);
+    }
 }
 
-const userLogout = async (req, res,next) => {
+const userLogout = async (req, res, next) => {
     try {
         req.session.user1 = null;
         req.session.user = 0
@@ -557,9 +642,7 @@ const userLogout = async (req, res,next) => {
     }
     catch (error) {
         next(error);
-
     }
-
 }
 
 
@@ -586,6 +669,7 @@ module.exports = {
     viewOrderDetails,
     cancelOrder,
     applyCoupon,
+    retunOrder,
     editUpdateCheckoutAddress,
     editCheckoutAddress,
     loadOrderSuccess,

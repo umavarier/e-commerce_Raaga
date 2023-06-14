@@ -1,16 +1,17 @@
 const User = require('../models/userModel')
-const products = require("../models/productModel")
+const products = require("../models/productModel");
+const category = require('../models/category');
 
 
 const loadCart = async (req, res) => {
     try {
         userSession = req.session.user_id;
         if (userSession) {
-
+            const categoryData = await category.find()
             const userData = await User.findById({ _id: userSession })
             const completeUser = await userData.populate('cart.item.productId')
            
-            res.render("cart", { user: req.session.user, cartProducts: completeUser.cart });
+            res.render("cart", { user: req.session.user, cartProducts: completeUser.cart, categoryData:categoryData });
 
         } else {
             res.redirect("/login");

@@ -1,6 +1,5 @@
 <%- include ('../layouts/adminHeader.ejs') %>
 
-
    <style>
         table,
         th,
@@ -8,8 +7,6 @@
             border: 1px solid rgba(7, 7, 7, 0.701);
         }
     </style> 
-
-
     
         <h4 style="color: white;" class="text-center my-5">ORDER MANAGEMENT</h4>
         <div class="mb-3 ps-4">
@@ -19,11 +16,12 @@
         </div>
         <div class="accordion accordion-flush col-md-4 " id="accordionFlushExample">
             <div style="border-radius: 40px;" class="accordion-item">
-              <h2 class="accordion-header" id="flush-headingOne">
-                <!-- <button class="accordion-button collapsed  text-info" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                  Sales report
-                </button> -->
-              </h2>
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button btn btn-danger collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                      Sales report
+                    </button>
+                  </h2>
+                  
               <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                 <div class="accordion-body">
                     <button class="bg-info" style="border: none; border-radius: 4px;" type="button" id="pdf"><small>Download as pdf</small></button>
@@ -43,8 +41,6 @@
                     <th scope="col">Status</th>
                     <th scope="col">Date</th>
                     <th scope="col">ACTION</th>
-
-
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -75,8 +71,7 @@
                             </td>
                             <td>
                                 
-                                <form action="/admin/updateStatus" method="post">
-                                   
+                                <form action="/admin/updateStatus" method="post">                                   
                                     <% if (orders[i-1].status!="returned" &&orders[i-1].status!="cancelled"&&orders[i-1].status!="Delivered"&&orders[i-1].status!="return success"&&orders[i-1].status!="return cancelled"&&orders[i-1].status!="reject return" ){%>
                                        
                                         <div class="col-md-10 d-flex justify-content-between">
@@ -87,8 +82,7 @@
                                              <option>packed</option>
                                             <option>Shipped</option>
                                             <option>Delivered</option>
-                                            <option>cancelled</option>
-                                            
+                                            <option>cancelled</option>                                            
                                             <option>reject return</option>
                                             <option>out for pickup</option>
                                             <option>return success</option>
@@ -136,9 +130,6 @@
                                         <% } %>
                                 </form>
                             </td>
-
-
-
 
                         </tr>
 
@@ -236,7 +227,7 @@
 
                     ]
                 });
-                doc.save('gamersBootCamp-Sales.pdf');
+                doc.save('raaga-Sales.pdf');
             });
 
             // download As excel
@@ -275,9 +266,6 @@
     }
     return buf;
   }
-
-
-
 
         </script>
 
