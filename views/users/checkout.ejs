@@ -207,7 +207,7 @@
                         </div>
                         <hr>
                         <hr>
-                        <h5 style="color: white;" class="section-title position-relative text-uppercase mb-3"><span
+                  <h5 style="color: white;" class="section-title position-relative text-uppercase mb-3"><span
                                 class=" pr-3">Order Total</span></h5>
                         <div class=" p-30 mb-5">
 
@@ -235,9 +235,10 @@
                                             <%}%>
                             </div>
                             <!-- Calculate the total price after discount -->
-                            <% const categoryItem=category.find(cat=> cat.name ===
+                            <!-- <% const categoryItem=category.find(cat=> cat.name ===
                                 checkoutdetails.item[0].productId.category); %>
-                                <% const totalPrice=subtotal - (subtotal * categoryItem.discountPercentage / 100); %>
+                               <% const totalPrice=subtotal - (subtotal * categoryItem.discountPercentage / 100); %> -->
+                                <!-- <%=totalPrice %> --> 
 
                                     <div class="border-bottom pt-3 pb-2">
                                         <div class="d-flex justify-content-between mb-3">
@@ -258,12 +259,16 @@
                                         </div>
                                     </div>
                                     <div class="pt-2">
-                                        <div style="color: white;" class="d-flex justify-content-between mt-2">
-                                            <h5 style="color:aliceblue;">Total</h5>
-                                            </h5>
-                                            </h5>
-                                            <input id="last" type="hidden" value="<%=totalPrice%>" name="amount">
-                                        </div>
+                                       
+        
+                                        <div class="d-flex justify-content-between text-light">
+                                            <h5 class="font-weight-medium" style="color:aliceblue;">Total</h5>                                         
+                                            
+                                            <input id="last" type="hidden" value="<%=subtotal%>" name="amount">
+                                            <h6 style="color: rgb(255, 255, 255);">
+                                                <%= subtotal %>
+                                            </h6>
+                                           </div>
                                     </div>
                                 </div>
                         <div class="mb-5 ">
@@ -355,7 +360,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" id="" value="<%=coupon.length %>">
+                        <input type="hidden" id="total" value="<%=coupon.length %>">
                         <% for(i=0;i<coupon.length;i++){ %>
                             <% if(coupon[i].isAvailable){%>
                                 <div class="form-group row">
@@ -364,7 +369,7 @@
                                                 id="<%=coupon[i]._id%>">
                                                 <%= coupon[i].name %>
                                             </strong></span>
-                                        <button id="" class="bg-dark" style="border: none;"
+                                        <button id="copy-btn" class="bg-dark" style="border: none;"
                                             onclick="copyText('<%=coupon[i]._id%>')"><i
                                                 style="color: rgb(217, 233, 160);" class="fas fa-copy"></i></button>
                                         <h6>
@@ -397,7 +402,7 @@
             }</script>
 
 
-        <!-- <script>
+        <script>
             function copyText(id) {
                 const textToCopy = document.getElementById(id).innerHTML;
                 navigator.clipboard.writeText(textToCopy).then(() => {
@@ -421,7 +426,7 @@
                 });
             };
 
-        </script> -->
+        </script>
         <script>
             // Get the radio button element
             var addressRadio = document.getElementById('addressid');

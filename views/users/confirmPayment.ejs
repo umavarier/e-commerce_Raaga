@@ -107,7 +107,7 @@
         <h1>Pay with Razorpay</h1>
         <form method="get" action="/onlinePayment">
             <input type="hidden" name="userId" value="<%= userId %>">
-            <input type="hidden" name="total" value="<%= total %>">
+            <input type="hidden" name="total" value="<%= subtotal %>">
             <input type="hidden" name="order_id" value="<%= orderId %>">
             <input type="hidden" name="key_id" value="<%= key_id %>">
             <input type="hidden" name="order" value="<%= JSON.stringify(orders) %>">
