@@ -319,7 +319,6 @@ const loadCheckout = async (req, res) => {
 
 let Norder;
 const placeOrder = async (req, res, next) => {
-
     try {
         let nAddress;
         if (req.body.address == 0) {
@@ -372,6 +371,7 @@ const placeOrder = async (req, res, next) => {
         }
         else if (req.body.payment == "wallet") {
             console.log("123");
+            console.log("test cost "+req.body.cost)
             let walletAmount = parseInt(req.body.walamount);
             let totalAmount = parseInt(req.body.cost)
             req.session.totalWallet = walletAmount;
@@ -407,7 +407,7 @@ const placeOrder = async (req, res, next) => {
                     currency: 'INR',
                     receipt: Norder._id.toString()
                 })
-
+                console.log("test cost:"+req.body.cost)
                 console.log('order Order created', razorpayOrder);
                 const productData = await products.find()
                 for (let key of userData.cart.item) {
@@ -536,11 +536,12 @@ const applyCoupon = async (req, res) => {
                 if (offerdata.usedBy.includes(req.session.user_id)) {
                     messag = 'coupon already used'
                     console.log(messag);
+                    res.send(messag);
                 } else {
                     // console.log('why?');
                     console.log(userdata.cart.totalPrice, offerdata.maximumvalue, offerdata.minimumvalue);
                     if (userdata.cart.totalPrice >= offerdata.minimumvalue) {
-                        console.log('offerdata.name');
+                        console.log(offerdata.name);
                         await coupon.updateOne({ name: offerdata.name }, { $push: { usedBy: userdata._id } });
                         disc = (offerdata.discount * totalPrice) / 100;
                         if (disc > offerdata.maximumvalue) { disc = offerdata.maximumvalue }
@@ -562,7 +563,6 @@ const applyCoupon = async (req, res) => {
         }
         // res.send({ messag, state: 0 })
     }
-
     catch (error) {
         console.log(error.message);
     }

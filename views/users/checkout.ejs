@@ -229,7 +229,7 @@
                                                     <%=key.productId.name%> x <%=key.qty%>
                                                 </p>
                                                 <p>
-                                                    <%= discountedPrice %>
+                                                    <%= discountedPrice %> 
                                                 </p>
                                             </div>
                                             <%}%>
@@ -265,7 +265,7 @@
                                             <h5 class="font-weight-medium" style="color:aliceblue;">Total</h5>                                         
                                             
                                             <input id="last" type="hidden" value="<%=subtotal%>" name="amount">
-                                            <h6 style="color: rgb(255, 255, 255);">
+                                            <h6 id="gT" style="color: rgb(255, 255, 255);">
                                                 <%= subtotal %>
                                             </h6>
                                            </div>
@@ -286,7 +286,8 @@
                                             <label class="custom-control-label" for="wallet" style="color:aliceblue;">Rs <%=wallet%></label>
                                             <input type="hidden" id="walamount" name="walamount" value="<%=wallet%>">
                                             <input type="hidden" name="cost" id="payable"
-                                                value="<%=checkoutdetails.totalPrice%>">            
+                                                value="<%=subtotal%>">           
+                                            <!--check total-->
                                         </div>
                                     </div>
                                 </div>
@@ -487,6 +488,7 @@
                             document.getElementById('dis').innerHTML = data.offerdata.discount + "%";
                             document.getElementById('amt').innerHTML = "Rs " + data.disc
                             document.getElementById('gT').innerHTML = total
+                            document.getElementById('last').value = total
                             // document.getElementById('final').value=total;
                             // console.log(  document.getElementById('final').value);
                             document.getElementById("payable").value = total;
