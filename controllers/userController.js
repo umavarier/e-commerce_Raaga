@@ -8,13 +8,15 @@ const order = require("../models/orderModel");
 const coupon = require("../models/couponModel");
 const banner = require("../models/bannerModel");
 const RazorPay = require('razorpay');
+const PDFDocument = require('pdfkit');
 
 
 const loadHome = async (req, res, next) => {
     try {
         const product = await products.find({ isAvailable: 1 });
         const banners = await banner.findOne({ is_active: 1 });
-        res.render('home', { user: req.session.user, product: product, banner: banners })
+        const category = await Category.find();
+        res.render('home', { user: req.session.user, product: product, banner: banners , category : category})
     }
     catch (error) {
         next(error);
@@ -261,7 +263,6 @@ const loadShop = async (req, res, next) => {
             })
         }
 
-
         if (sort == 0) {
             productData = await products.find({ $and: [{ category: arr }, { $or: [{ name: { $regex: '' + search + ".*" } }, { category: { $regex: ".*" + search + ".*" } }] }, { isAvailable: 1 }] }).sort({ $natural: -1 })
             pageCount = Math.floor(productData.length / limit)
@@ -296,7 +297,9 @@ const loadDetails = async (req, res, next) => {
         const id = req.query.id;
         const details = await products.findOne({ _id: id })
         const product = await products.find({ category: details.category });
-        res.render("details", { user: req.session.user, detail: details, related: product, message: "" });
+        const productData = await products.find({ category: details.category });
+        const categoryData = await Category.find();
+        res.render("details", { user: req.session.user, detail: details, related: product, category: categoryData, product: productData, message: "" });
     } catch (error) {
         next(error);
     }
@@ -371,7 +374,7 @@ const placeOrder = async (req, res, next) => {
         }
         else if (req.body.payment == "wallet") {
             console.log("123");
-            console.log("test cost "+req.body.cost)
+            console.log("test cost " + req.body.cost)
             let walletAmount = parseInt(req.body.walamount);
             let totalAmount = parseInt(req.body.cost)
             req.session.totalWallet = walletAmount;
@@ -407,7 +410,7 @@ const placeOrder = async (req, res, next) => {
                     currency: 'INR',
                     receipt: Norder._id.toString()
                 })
-                console.log("test cost:"+req.body.cost)
+                console.log("test cost:" + req.body.cost)
                 console.log('order Order created', razorpayOrder);
                 const productData = await products.find()
                 for (let key of userData.cart.item) {
@@ -536,7 +539,7 @@ const applyCoupon = async (req, res) => {
                 if (offerdata.usedBy.includes(req.session.user_id)) {
                     messag = 'coupon already used'
                     console.log(messag);
-                    res.send(messag);
+                    res.send({ messag, state: 0 });
                 } else {
                     // console.log('why?');
                     console.log(userdata.cart.totalPrice, offerdata.maximumvalue, offerdata.minimumvalue);
@@ -632,6 +635,58 @@ const retunOrder = async (req, res) => {
         console.log(error.message);
     }
 }
+const loadInvoice = async (req, res) => {
+    const { orderId } = req.params;
+
+    try {
+        const order = await Orders.findById(orderId).populate('userId').populate('products.item.productId');
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        // Create a new PDF document
+        const doc = new PDFDocument();
+
+        // Set the response headers for file download
+        res.setHeader('Content-Disposition', `attachment; filename="invoice_${order._id}.pdf"`);
+        res.setHeader('Content-Type', 'application/pdf');
+
+        // Pipe the PDF document to the response
+        doc.pipe(res);
+
+        // Add content to the PDF
+        doc.font('Helvetica-Bold').fontSize(20).text('Invoice', { align: 'center' }).moveDown();
+
+        doc.fontSize(14).text(`Order ID: ${order._id}`, { align: 'left' }).moveDown();
+
+        // Add user information
+        doc.fontSize(12).text('User Information:', { align: 'left', bold: true }).moveDown();
+        doc.text(`Name: ${order.userId.firstname} ${order.userId.lastname}`);
+        doc.text(`Email: ${order.userId.email}`);
+        doc.moveDown();
+
+        // Add product information
+        doc.fontSize(12).text('Product Information:', { align: 'left', bold: true }).moveDown();
+        order.products.item.forEach((item, index) => {
+            const product = item.productId;
+            doc.text(`Product ${index + 1}: ${product.name}`);
+            doc.text(`Quantity: ${item.qty}`);
+            doc.text(`Price: $${product.price}`);
+            doc.text(`Total: $${item.qty * product.price}`);
+            doc.moveDown();
+        });
+
+        // Add total price
+        doc.fontSize(12).text(`Total Price: $${order.products.totalPrice}`, { align: 'left' }).moveDown();
+
+        // Finalize the PDF document
+        doc.end();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred while generating the invoice' });
+    }
+}
+
 
 const userLogout = async (req, res, next) => {
     try {
@@ -673,4 +728,5 @@ module.exports = {
     editUpdateCheckoutAddress,
     editCheckoutAddress,
     loadOrderSuccess,
+    loadInvoice,
 }

@@ -93,6 +93,8 @@ user_route.get("/returnOrder",userController.retunOrder);
 
 user_route.get("/vieworder",auth.isLogin,userController.viewOrderDetails);
 
+user_route.get("/invoice/:orderId",userController.loadInvoice);
+
 user_route.get("/logout",userController.userLogout);
 
 

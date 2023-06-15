@@ -1,180 +1,232 @@
 <%- include ('../layouts/adminHeader.ejs') %>
 
-        <h4 style="color: white;" class="text-center my-5 ">ADMIN DASHBOARD</h4>
-        <div  class="container-fluid pt-4 px-4">
-            <div style="margin-left: 450px;" class="row g-4">
-               
-                <div class="col-sm-6 col-xl-3">
-                    <div class="bg-info rounded d-flex align-items-center justify-content-between p-2">
-                        <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                        <div class="ms-3">
-                            <p class="mb-2">Sale</p>
-                            <h6 class="mb-0">
-                                <%=sales%>
-                            </h6>
-                        </div>
-                    </div>
-                </div>
-              
-                <div class="col-sm-6 col-xl-3">
-                    <div class="bg-success rounded d-flex align-items-center justify-content-between p-2">
-                        <i class="fa fa-chart-pie fa-3x text-primary"></i>
-                        <div class="ms-3">
-                            <p class="mb-2">Total Revenue</p>
-                            <h6 class="mb-0"><%=totalRevenue%></h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<h4 style="color: white;" class="text-center my-5">ADMIN DASHBOARD</h4>
+<div class="container-fluid pt-4 px-4">
+  <div style="margin-left: 450px;" class="row g-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="bg-info rounded d-flex align-items-center justify-content-between p-2">
+        <i class="fa fa-chart-bar fa-3x text-primary"></i>
+        <div class="ms-3">
+          <p class="mb-2">Sale</p>
+          <h6 class="mb-0">
+            <%=sales%>
+          </h6>
         </div>
-        <!-- Sale & Revenue End -->
-
-        <hr>
-        <!-- space for illustration -->
-        <div style="height: 50vh;">
-          <div style="margin-left: 5%; margin-top: 100px; width: 90%; height: 70vh; background-color: #0b0c2a;">
-            <canvas id="myChart2" class="mt-5" style="margin-left: 23%; width: 100%; max-width: 700px;"></canvas>
-          </div>
-          <div  style=" margin-left:10% ;  border-radius: 20px; padding-top: 10px; width: 80%; height: 70vh; background-color: #0b0c2a;">
-              <canvas id="myChart" class="mt-4" style="margin-left: 19%; width:100%; max-width:700px"></canvas>
-          </div>
-          
-
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="bg-success rounded d-flex align-items-center justify-content-between p-2">
+        <i class="fa fa-chart-pie fa-3x text-primary"></i>
+        <div class="ms-3">
+          <p class="mb-2">Total Revenue</p>
+          <h6 class="mb-0"><%=totalRevenue%></h6>
         </div>
-        <input type="hidden" id="pds" value="<%=pds%>">
-        <input type="hidden" id="qty" value="<%=qty%>">
-        <input type="hidden" id="key1" value="<%=key1%>" />
-        <input type="hidden" id="key2" value="<%=key2%>" />
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Sale & Revenue End -->
+<hr>
+<!-- space for illustration -->
+<div style="height: 50vh;">
+  <div style="margin-left: 5%; margin-top: 100px; width: 90%; height: 70vh; background-color: #0b0c2a;">
+    <canvas id="myChart2" class="mt-5" style="margin-left: 23%; width: 100%; max-width: 700px;"></canvas>
+  </div>
+  <div style="margin-left: 10%; border-radius: 20px; padding-top: 10px; width: 80%; height: 70vh; background-color: #0b0c2a;">
+    <canvas id="myChart" class="mt-4" style="margin-left: 19%; width: 100%; max-width: 700px;"></canvas>
+  </div>
+</div>
+<!-- Filter Dropdown -->
+<div class="text-center mt-4">
+  <select id="timeFilter" onchange="filterData()">
+    <option value="weekly">Weekly</option>
+    <option value="monthly">Monthly</option>
+    <option value="yearly">Yearly</option>
+  </select>
+</div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
-        </script>
+<input type="hidden" id="pds" value="<%=pds%>">
+<input type="hidden" id="qty" value="<%=qty%>">
+<input type="hidden" id="key1" value="<%=key1%>" />
+<input type="hidden" id="key2" value="<%=key2%>" />
 
-        <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
-            x = document.getElementById("pds").value;
-            y = document.getElementById("qty").value;
-            xValues = x.split(",")
-            yValues = y.split(",")
-            key1 = document.getElementById('key1').value
-            key2 = document.getElementById('key2').value
-            xValue = key1.split(",")
-            yValue = key2.split(",")
-            console.log(xValue, yValue);
+<script>
+// Function to filter the data based on the selected time filter
+function filterData() {
+  const timeFilter = document.getElementById("timeFilter").value;
+  const x = document.getElementById("pds").value;
+  const y = document.getElementById("qty").value;
+  const xValues = x.split(",");
+  const yValues = y.split(",");
+  const key1 = document.getElementById("key1").value;
+  const key2 = document.getElementById("key2").value;
+  const xValue = key1.split(",");
+  const yValue = key2.split(",");
+  console.log(xValue, yValue);
 
-            var barColors = [
-                "#CAE862",
-                "#2b5797",
-                "#e8c3b9",
-                "#1e7145",
-                "#0000FF",
-                "#FF0000",
-                "#D1FF00",
-                "#2b5797",
-                "#e8c3b9",
-                "#1e7145",
-                "#0000FF",
-                "#FFFF00"
-            ];
-
-           new Chart("myChart", { 
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      label: "stock remains",
-      backgroundColor: barColors,
-      data: yValues,
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "limited stocks",
-      fontColor:"white",
-      fontSize: 18
-    },
-    scales: {
-      xAxes: [{
-        ticks: {
-          fontColor: "white"
-        },
-        gridLines: {
-          color: "rgba(255,255,255,0.1)" // set gridlines color to white
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true, // Start the y-axis from zero
-          fontColor: "white",
-          max: 16,
-          stepSize: 2
-        },
-        gridLines: {
-          color: "rgba(255,255,255,0.1)" // set gridlines color to white
-        },
-      }]
-    },
-    legend: {
-      labels: {
-        fontColor: "white"
-      }
-    },
-    backgroundColor: "white" // set background color to white
+  if (timeFilter === "weekly") {
+    // Filter data for weekly time period
+    // Implement your logic to filter the data by week
+    // Example: Keep only the data points for the current week
+  } else if (timeFilter === "monthly") {
+    // Filter data for monthly time period
+    // Implement your logic to filter the data by month
+    // Example: Keep only the data points for the current month
+  } else if (timeFilter === "yearly") {
+    // Filter data for yearly time period
+    // Implement your logic to filter the data by year
+    // Example: Keep only the data points for the current year
   }
-});
 
+  // Update the charts with the filtered data
+  updateCharts(xValues, yValues, xValue, yValue);
+}
 
-        </script>
-        
-        <script>
-          new Chart("myChart2", {
-              type: "line",
-              data: {
-                  labels: xValue,
-                  datasets: [{
-                      label: 'Sales',
-                      borderColor: '#87CEFA',
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      pointBackgroundColor: 'blue',
-                      data: yValue
-                  }]
-              },
-              options: {
-                title: {
-                          display: true,
-                          text: "Sales Report",
-                          fontColor:"white",
-                          fontSize: 18
-                        },
-                  legend: {
-                      display: false
-                  },
-                  scales: {
-                    yAxes: [{
-                    gridLines: {
-                        color: "white",
-                        borderDash: [1, 4], // Optional: This creates a dashed line effect
-                        lineWidth: 0.3 // Optional: Increase the line width if desired
-                    },
-                    ticks: {
-                        fontColor: "white",
-                        beginAtZero: true
-                    }
-                }],
-                xAxes: [{
-                    gridLines: {
-                        color: "white",
-                        borderDash: [1, 4], // Optional: This creates a dashed line effect
-                        lineWidth: 0.3 // Optional: Increase the line width if desired
-                    },
-                    ticks: {
-                        fontColor: "white"
-                    }
-                      }]
-                  }
-              }
-          });
-      </script>
+// Function to update the charts with new data
+function updateCharts(xValues, yValues, xValue, yValue) {
+  const barColors = [
+    "#CAE862",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145",
+    "#0000FF",
+    "#FF0000",
+    "#D1FF00",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145",
+    "#0000FF",
+    "#FFFF00"
+  ];
+
+  // Update bar chart
+  const barChart = new Chart("myChart", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [
+        {
+          label: "stock remains",
+          backgroundColor: barColors,
+          data: yValues
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: "limited stocks",
+        fontColor: "white",
+        fontSize: 18
+      },
+      scales: {
+        xAxes: [
+          {
+            ticks: {
+              fontColor: "white"
+            },
+            gridLines: {
+              color: "rgba(255,255,255,0.1)" // set gridlines color to white
+            }
+          }
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true, // Start the y-axis from zero
+              fontColor: "white",
+              max: 16,
+              stepSize: 2
+            },
+            gridLines: {
+              color: "rgba(255,255,255,0.1)" // set gridlines color to white
+            }
+          }
+        ]
+      },
+      legend: {
+        labels: {
+          fontColor: "white"
+        }
+      },
+      backgroundColor: "white" // set background color to white
+    }
+  });
+
+  // Update line chart
+  const lineChart = new Chart("myChart2", {
+    type: "line",
+    data: {
+      labels: xValue,
+      datasets: [
+        {
+          label: "Sales",
+          borderColor: "#87CEFA",
+          backgroundColor: "rgba(0, 0, 0, 0)",
+          pointBackgroundColor: "blue",
+          data: yValue
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: "Sales Report",
+        fontColor: "white",
+        fontSize: 18
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [
+          {
+            gridLines: {
+              color: "white",
+              borderDash: [1, 4], // Optional: This creates a dashed line effect
+              lineWidth: 0.3 // Optional: Increase the line width if desired
+            },
+            ticks: {
+              fontColor: "white",
+              beginAtZero: true
+            }
+          }
+        ],
+        xAxes: [
+          {
+            gridLines: {
+              color: "white",
+              borderDash: [1, 4], // Optional: This creates a dashed line effect
+              lineWidth: 0.3 // Optional: Increase the line width if desired
+            },
+            ticks: {
+              fontColor: "white"
+            }
+          }
+        ]
+      }
+    }
+  });
+}
+
+// Initial loading of the dashboard with default data
+window.onload = function () {
+  const x = document.getElementById("pds").value;
+  const y = document.getElementById("qty").value;
+  const xValues = x.split(",");
+  const yValues = y.split(",");
+  const key1 = document.getElementById("key1").value;
+  const key2 = document.getElementById("key2").value;
+  const xValue = key1.split(",");
+  const yValue = key2.split(",");
+  console.log(xValue, yValue);
+
+  updateCharts(xValues, yValues, xValue, yValue);
+};
+</script>
+
       
 
         <%- include ('../layouts/adminFooter.ejs') %>
