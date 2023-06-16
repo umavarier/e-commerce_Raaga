@@ -74,8 +74,7 @@
                         <h5 style=" margin-right: 4%; color: white;"
                             class="col-md-12 form-group section-title position-relative text-uppercase mb-3"><span
                                 class=" pr-3">Choose Address</span></h5>
-                        <div>
-
+                         <div>
                             <div class="col-md-12">
                                 <div class="col-12 form-group d-flex justify-content">
                                     <% for(i=0;i<address.length;i++){%>
@@ -478,7 +477,9 @@
                 console.log("sample");
                 cop = document.getElementById('coupon').value
                 console.log(cop);
-                subT = document.getElementById('subTotal').value
+                subT = document.getElementById('subTotal').value;
+                document.getElementById("dis").style.display="block";
+                document.getElementById("amt").style.display="block";
                 console.log(subT);
                 $.ajax({
                     url: '/applyCoupon',
@@ -533,6 +534,8 @@
             }
             function cancelCoupon() {
                 document.getElementById("coupon").value = "";
+                document.getElementById("dis").style.display="none";
+                document.getElementById("amt").style.display="none";
                 calculateTotal();
             }
             function calculateTotal() {
@@ -540,8 +543,7 @@
                 const discount = parseFloat(document.getElementById("dis").value);
                 const reductionAmount = parseFloat(document.getElementById("amt").value);
                 const total = subtotal - reductionAmount;
-                document.getElementById("dis").value="";
-                document.getElementById("amt").value="";
+                
                 document.getElementById("gT").innerText = subtotal
                 document.getElementById("last").value = total.toFixed(2);
             }

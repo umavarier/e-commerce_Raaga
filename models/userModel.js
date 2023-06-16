@@ -143,8 +143,6 @@ userSchema.methods.updateCart = async function (id, qty) {
     return cart.totalPrice;
 };
 
-
-
 userSchema.methods.addToWishlist = function (product) {
     const wishlist = this.wishlist
     const isExisting = wishlist.item.findIndex(objInItems => {

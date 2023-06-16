@@ -1,5 +1,5 @@
 <%- include ('../layouts/header.ejs') %>
-<body style="background-color: #13154a;">
+<body style="background-color: #13154a; " class="justify-content-between">
 <br>
     <!-- Breadcrumb Start -->
     <div class="container-fluid">
@@ -129,6 +129,7 @@
                                                     onclick="update('<%= cartProducts.item[i].productId._id %>','<%-cartProducts.item[i].productId.stock%>','<%=i%>')">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
+                                                
                                             </div>
                                         </td>
                                         <td id="<%=i%>" class="align-middle">
@@ -243,6 +244,7 @@
         if (plus) {
             if (currentqty.value < parseInt(plus)) {
                 currentqty.parentNode.querySelector('input[type=number]').stepUp();
+                
             }
         } else {
             currentqty.parentNode.querySelector('input[type=number]').stepDown()
@@ -251,7 +253,7 @@
             // console.log("currrent" + currentqty.value);
             // console.log('qty' + currentqty.value);
             let qty = document.getElementById(id).value;
-            console.log(currentqty.value, plus);
+            console.log(currentqty.value, plus);        
             if (currentqty.value == plus && currentqty.value == 0) {
                 console.log(currentqty.value, plus);
             } else {
@@ -276,4 +278,4 @@
     }
 </script>
                 
-                <%- include ('../layouts/footer.ejs') %>
+      </html>       

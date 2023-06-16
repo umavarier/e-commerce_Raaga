@@ -37,7 +37,6 @@ const loadRegister = async (req, res, next) => {
     }
     catch (error) {
         next(error);
-
     }
 }
 
@@ -153,7 +152,6 @@ const editUserUpdate = async (req, res, next) => {
         res.redirect("/userProfile")
     } catch (error) {
         next(error);
-
     }
 }
 
@@ -319,7 +317,6 @@ const loadCheckout = async (req, res) => {
     }
 }
 
-
 let Norder;
 const placeOrder = async (req, res, next) => {
     try {
@@ -342,7 +339,6 @@ const placeOrder = async (req, res, next) => {
         else {
             nAddress = await address.findOne({ _id: req.body.address });
         }
-
         const userData = await User.findOne({ _id: req.session.user_id })
 
         Norder = new order({
@@ -351,7 +347,6 @@ const placeOrder = async (req, res, next) => {
             payment: {
                 method: 'COD',
                 amount: req.body.amount,
-
             },
             offer: req.body.coupon,
             products: userData.cart,

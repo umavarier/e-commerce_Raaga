@@ -21,7 +21,7 @@ const catSchema = mongoose.Schema({
     startDate: {
         type: Date,
     },
-      endDate: {
+    endDate: {
         type: Date,
     },
 
