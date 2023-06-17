@@ -8,7 +8,6 @@ const catSchema = mongoose.Schema({
         uppercase: true,
         required: true,
     },
-
     is_available: {
         type: Number,
         default: 1,

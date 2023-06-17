@@ -93,7 +93,4 @@ const orderSchema = new mongoose.Schema({
   }
 })
 
-
-
-
 module.exports = mongoose.model('Orders', orderSchema)
