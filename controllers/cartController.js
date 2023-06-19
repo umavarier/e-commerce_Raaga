@@ -9,8 +9,8 @@ const loadCart = async (req, res) => {
             const categoryData = await category.find()
             const userData = await User.findById({ _id: userSession })
             const completeUser = await userData.populate('cart.item.productId')
-           
-            res.render("cart", { user: req.session.user, cartProducts: completeUser.cart, categoryData:categoryData });
+
+            res.render("cart", { user: req.session.user, cartProducts: completeUser.cart, categoryData: categoryData });
         } else {
             res.redirect("/login");
         }
@@ -42,16 +42,39 @@ const addToCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
     try {
-        console.log("thisss");
-        let { quantity, _id } = req.body
-        const userData = await User.findById({ _id: req.session.user_id })
+        ;
+        let { quantity, _id, preValue } = req.body;
+        console.log(quantity, _id, preValue)
+        const userData = await User.findById({ _id: req.session.user_id });
         const productData = await products.findById({ _id: _id })
+        const categoryData = await category.find();
+        const categoryItem = categoryData.find(cat => cat.name === productData.category);
+        const CartIds = userData.cart.item;
+        const cartPrId = CartIds.map((item) => item.productId);
+        const productDetails = await products.find({ _id: { $in: cartPrId } });
+        const proCata = productDetails.map(items => items.category);
+        const matchedCategory = categoryData.filter(category => proCata.includes(category.name));
+        const TotalDiscount = matchedCategory.reduce((total, items) => total + items.discountPercentage,0);
 
-        // const discount = await category.findById
-        const price = productData.price;
-        let test = await userData.updateCart(_id, quantity)
-        console.log("hai"+test);
-        res.json({ test, price })
+        // let total = 0;
+        // let discountedTotalPrice = 0;
+        let discountedPrice = 0;
+       let totalPrice;
+        console.log("categoryItem" + categoryItem);
+        console.log("dis_per" + categoryItem.discountPercentage)
+        if (categoryItem.discountPercentage !== 0) {
+            discountedPrice = productData.price - (productData.price * categoryItem.discountPercentage) / 100;
+          totalPrice = discountedPrice * quantity;
+        } else {
+            discountedPrice = productData.price;
+            totalPrice = discountedPrice * quantity;
+        }
+        // const totalPrice = discountedPrice * quantity;
+        console.log(totalPrice);
+        let test = await userData.updateCart(_id, quantity)        
+        const Total = test
+        console.log("discountedPrice" + discountedPrice)
+        res.json({ test, price: totalPrice })
 
     } catch (error) {
         console.log(error)

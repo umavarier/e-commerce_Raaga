@@ -23,7 +23,6 @@ const catSchema = mongoose.Schema({
     endDate: {
         type: Date,
     },
-
 });
 
 module.exports = mongoose.model('category', catSchema)
