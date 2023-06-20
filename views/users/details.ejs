@@ -70,15 +70,15 @@
                     </div>
                     <!-- <h3 style="color: rgb(217, 217, 217);" class="h4 mb-4">Rs <%=detail.price%>
                     </h3> -->
-                    <% const categoryItem = category.find(cat => cat.name === product[i].category); %>
+                    <% const categoryItem = category.find(cat => cat.name === detail.category); %>
                     <%if(categoryItem.discountPercentage!=0){%>
                         
-                        <% let value = product[i].price - product[i].price*categoryItem.discountPercentage/100 %>
+                        <% let value = detail.price - detail.price*categoryItem.discountPercentage/100 %>
                         <i class="text-light">Rs.<%=value%></i><br>
-                        <del class="text-light">Rs.<%= product[i].price %></del>                                        
+                        <del class="text-light">Rs.<%= detail.price %></del>                                        
                         <i class="text-light">(<%=categoryItem.discountPercentage%>%off)</i>
                     <%}else{%>
-                       <i class="text-light"> Rs.<%= product[i].price %></i>
+                       <i class="text-light"> Rs.<%= detail.price %></i>
                     <%}%>
                                     
                                     

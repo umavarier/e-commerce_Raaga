@@ -290,7 +290,7 @@ const securePassword = async (password) => {
     }
   };
   
-  const sortOrder = async (req, res,next) => {
+  const sortOrder = async (req, res) => {
     let { start, end } = req.body
     console.log(start, end);
     const allOrders = await orders.find({

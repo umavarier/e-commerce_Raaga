@@ -128,6 +128,7 @@ userSchema.methods.updateCart = async function (id, qty) {
         if (qty > product.stock) {
             // Display stock quantity exceeded alert
             const message = `Stock quantity (${product.stock}) exceeded. You can only add up to ${product.stock} items.`;
+            console.log(message)
             throw new Error(message);
         }
         cart.item[index].qty += 1;

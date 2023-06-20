@@ -293,11 +293,16 @@ const loadShop = async (req, res, next) => {
 const loadDetails = async (req, res, next) => {
     try {
         const id = req.query.id;
+        console.log("id:"+id)
         const details = await products.findOne({ _id: id })
+        if(details){
         const product = await products.find({ category: details.category });
         const productData = await products.find({ category: details.category });
         const categoryData = await Category.find();
         res.render("details", { user: req.session.user, detail: details, related: product, category: categoryData, product: productData, message: "" });
+        }else{
+            res.redirect("/loadshop")
+        }    
     } catch (error) {
         next(error);
     }

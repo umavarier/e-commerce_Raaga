@@ -70,6 +70,8 @@ admin_route.get('/unlistProduct', productController.unlistProduct);
 
 admin_route.get('/order', adminController.loadOrder);
 
+admin_route.post('/updateOrder',adminController.sortOrder);
+
 admin_route.post("/updateStatus",adminController.updateStatus);
 
 admin_route.get("/loadOrderDetails",adminController.viewOrderDetails);

@@ -127,7 +127,8 @@
                                                                 <td class="align-middle ">
                                                                     <div class="d-flex  ms-4"
                                                                         style="max-width: 160px; ">
-                                                                        <button class=" button hollow circle btn-info min-btn"
+                                                                        <button
+                                                                            class=" button hollow circle btn-info min-btn"
                                                                             style="border-radius: 5px; height: 34px; margin-left: 60px;"
                                                                             onclick="update('<%= cartProducts.item[i].productId._id %>',0,'<%=i%>')">
                                                                             <i class="fas fa-minus"></i>
@@ -147,6 +148,7 @@
                                                                             onclick="update('<%= cartProducts.item[i].productId._id %>','<%=cartProducts.item[i].productId.stock%>','<%=i%>')">
                                                                             <i class="fas fa-plus"></i>
                                                                         </button>
+                                                                        <span class="stock-exceed-message" sty></span>
 
                                                                     </div>
                                                                 </td>
@@ -195,9 +197,11 @@
                                                                 <div class="d-flex text justify-content-between mt-2">
                                                                     <%}%>
                                                                         <h5 style="color:aliceblue;">Total</h5>
-                                                                        <input type="hidden" id="TotalSum" value=<%= total %> >
-                                     
-                                                                        <h5 style="color:aliceblue;" id="total1">Rs <%= total %>
+                                                                        <input type="hidden" id="TotalSum"
+                                                                            value=<%=total %> >
+
+                                                                        <h5 style="color:aliceblue;" id="total1">Rs <%=
+                                                                                total %>
                                                                         </h5>
                                                                 </div>
                                                                 <a class="btn btn-block sm btn-primary font-weight-bold mt-4"
@@ -223,7 +227,7 @@
         jQuery(document).ready(function () {
             // This button will increment the value
             $('[data-quantity="plus"]').click(function (e) {
-                console.log("djdidjd")
+
                 // Stop acting like a button
                 e.preventDefault();
                 // Get the field name
@@ -234,13 +238,12 @@
                 var values = Val.split(',')
                 var currentVal = parseInt(values[0])
                 var stock = parseInt(values[1])
-                console.log("manu")
-                console.log(currentVal, stock, " sugamanoo devi");
+
                 // If is not undefined
                 if (!isNaN(currentVal)) {
                     // Increment
                     if (currentVal == stock) {
-
+                        showMessage('Stock exceeds maximum');
                     } else {
                         $('input[name=' + fieldName + ']').val(currentVal + 1);
                     }
@@ -274,49 +277,85 @@
             currentqty = document.getElementById(id);
             const prevQtyVal = currentqty.value
             const value = document.getElementById("TotalSum").value;
-            console.log(plus, amt, 'bajabjabja');
+            console.log(prevQtyVal + ".............")
             if (plus) {
-                if(prevQtyVal == plus) return true
+                if (prevQtyVal == plus) return true
                 console.log(prevQtyVal, "  dsfasdf " + plus)
                 if (prevQtyVal < parseInt(plus)) {
                     currentqty.parentNode.querySelector('input[type=number]').stepUp();
-                } 
+                    if (currentqty.value >= plus) {
+                        console.log("stock exceeds");
+                        showMessage('Stock exceeds maximum');
+                    }
+                }
             } else {
-                if(prevQtyVal == 1) return false
+                if (prevQtyVal == 1) return false
                 currentqty.parentNode.querySelector('input[type=number]').stepDown()
+                clearMessage();
             }
             // setTimeout(() => {
-                // console.log("currrent" + currentqty.value);
-                // console.log('qty' + currentqty.value);
+            // console.log("currrent" + currentqty.value);
+            // console.log('qty' + currentqty.value);
 
-                let qty = document.getElementById(id).value;
-                console.log("no:" + currentqty.value, plus);
-                if (currentqty.value == plus && currentqty.value == 0) {
-                    console.log("currentqty.value, plus" + currentqty.value, plus);
-                } else {
-                    $.ajax({
-                        url: '/updateCart',
-                        type: 'POST',
-                        data: { quantity: qty, _id: id,preValue:value },
-                        success: function (data) {
+            let qty = document.getElementById(id).value;
+            console.log("no:" + currentqty.value, plus);
 
-                            let val = +document.getElementById("total1").innerHTML.split(" ")[1]
-                            const oneItmevalue =(data.price / qty)
+            if (currentqty.value < plus) {
+                console.log("empty")
+            }
+            if (currentqty.value == plus && currentqty.value == 0) {
+                console.log("currentqty.value, plus" + currentqty.value, plus);
+            } else {
+                $.ajax({
+                    url: '/updateCart',
+                    type: 'POST',
+                    data: { quantity: qty, _id: id, preValue: value },
+                    success: function (data) {
 
-                            if(qty < prevQtyVal) val -= oneItmevalue
-                            else val += oneItmevalue
+                        let val = +document.getElementById("total1").innerHTML.split(" ")[1]
+                        const oneItmevalue = (data.price / qty)
 
-                            const TotalValue = data.price
-                            const newvalu = document.getElementById("total1").innerHTML = "Rs " + val;
-                            const dataamount = document.getElementById(amt).innerHTML = data.price;
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(textStatus, errorThrown);
-                        }
-                    })
-                }
+                        if (qty < prevQtyVal) val -= oneItmevalue
+                        else val += oneItmevalue
+
+                        const TotalValue = data.price
+                        const newvalu = document.getElementById("total1").innerHTML = "Rs " + val;
+                        const dataamount = document.getElementById(amt).innerHTML = data.price;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus, errorThrown);
+                    }
+                })
+            }
             // }, 50);
         }
+        function showMessage(message) {
+            // Check if the message element already exists
+            var messageElement = $('.stock-exceed-message');
+
+            if (messageElement.length > 0) {
+                // Update the existing message element with the new message
+                messageElement.text(message);
+            } else {
+                // Create a new element for the message
+                var messageElement = $('<span>')
+                    .addClass('stock-exceed-message')
+                    .text(message);
+
+                // Append the message element after the plus button
+                $('[data-quantity="plus"]').after(messageElement);
+            }
+            const msg = document.querySelector(".stock-exceed-message")
+
+            // Remove the message after a certain duration (e.g., 3 seconds)
+            // setTimeout(function () {
+            //    msg
+            // }, 3000);
+        }
+        function clearMessage() {
+            $('.stock-exceed-message').remove();
+        }
+
     </script>
 
     </html>
