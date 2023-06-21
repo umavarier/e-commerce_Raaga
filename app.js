@@ -1,4 +1,4 @@
-const express =require("express");
+const express = require("express");
 const nocache=require("nocache");
 const userRoute=require('./routes/userRoute');
 const mongo = require('./config/config');
